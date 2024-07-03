@@ -1,6 +1,9 @@
+import 'package:apk/service/preferencesService.dart';
 import 'package:apk/ui/widgets/custom_button.dart';
 import 'package:apk/ui/widgets/custom_text_form_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../shared/theme.dart';
 
 class Login extends StatelessWidget {
@@ -8,6 +11,9 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController username = TextEditingController();
+    TextEditingController password = TextEditingController();
+
     Widget title() {
       return Container(
         margin: EdgeInsets.only(top: 30),
@@ -33,34 +39,73 @@ class Login extends StatelessWidget {
       );
     }
 
+    Future<void> loginProcess() async {
+      final dio = Dio();
+      var data = {
+        'username': username.text,
+        'password': password.text,
+      };
+
+      var response = await dio.post('https://sintrenayu.com/api/login',
+          data: data,
+          options: Options(headers: {'Accept': 'application/json'}));
+
+      if (response.statusCode == 200) {
+        print(response.data);
+
+        // SharedPreferences prefs = await SharedPreferences.getInstance();
+        // await prefs.setBool('isLoggedIn', true);
+        await PreferencesService().setLoggedIn(true);
+
+
+        // ignore: use_build_context_synchronously
+        Navigator.pushNamed(context, '/main');
+      } else {
+        print(response.statusMessage);
+      }
+    }
+
     Widget inputSection() {
       Widget namaInput() {
         return CustomTextFromField(
+          controller: username,
           title: 'Nama Pengguna',
           hintText: 'Masukan Nama Pengguna',
+          validator: (value) {
+            return value == null || value.isEmpty
+                ? "nama pengguna tidak boleh kosong"
+                : null;
+          },
         );
       }
 
       Widget katasandiInput() {
         return CustomTextFromField(
-          title: 'kata Sandi', 
+          controller: password,
+          title: 'kata Sandi',
           hintText: 'Masukan Kata Sandi',
           obscureText: true,
-          );
+          validator: (value) {
+            return value == null || value.isEmpty
+                ? "kata sandi tidak boleh kosong"
+                : null;
+          },
+        );
       }
-        Widget loginButton(){
-          return CustomButton(
-            title: 'Masuk',
-            textStyle: whiteTextStyle.copyWith(
+
+      Widget loginButton() {
+        return CustomButton(
+          title: 'Masuk',
+          textStyle: whiteTextStyle.copyWith(
             fontSize: 16,
             fontWeight: semiBold,
           ),
-            onPressed: (){
-              Navigator.pushNamed(context, '/main');
-            },
-          );
-        }
-
+          onPressed: () {
+            loginProcess();
+            // Navigator.pushNamed(context, '/main');
+          },
+        );
+      }
 
       return Container(
         margin: EdgeInsets.only(top: 30),

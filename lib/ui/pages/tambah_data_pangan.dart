@@ -3,12 +3,20 @@ import 'package:apk/ui/widgets/custom_text_form_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../../shared/theme.dart';
+import 'package:intl/intl.dart';
 
-class TambahDataPangan extends StatelessWidget {
+class TambahDataPangan extends StatefulWidget {
   const TambahDataPangan({Key? key}) : super(key: key);
 
   @override
+  State<TambahDataPangan> createState() => _TambahDataPanganState();
+}
+
+class _TambahDataPanganState extends State<TambahDataPangan> {
+  @override
   Widget build(BuildContext context) {
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        <String, dynamic>{}) as Map;
     TextEditingController namaC = TextEditingController();
     TextEditingController ketersediaanC = TextEditingController();
     TextEditingController kebutuhanC = TextEditingController();
@@ -20,26 +28,98 @@ class TambahDataPangan extends StatelessWidget {
         'ketersediaan': ketersediaanC.text,
         'kebutuhan': kebutuhanC.text,
         'harga': hargaC.text,
+        'tanggal': DateFormat.yMMMMEEEEd().add_jm().format(DateTime.now()),
       };
+      print(arguments['jenis_pangan_id']);
       print(data);
+      print("Oke Siap");
     }
+    // bool validateInputs() {
+    //   if (namaC.text.isEmpty) {
+    //     showDialog(
+    //       context: context,
+    //       builder: (context) => AlertDialog(
+    //         title: Text('Error'),
+
+    //         content: Text('data tidak boleh kosong'),
+    //         actions: <Widget>[
+    //           TextButton(
+    //             child: Text('OK'),
+    //             onPressed: () => Navigator.of(context).pop(),
+    //           ),
+    //         ],
+    //       ),
+    //     );
+    //     return false;
+    //   }
+    //   if (ketersediaanC.text.isEmpty) {
+    //     showDialog(
+    //       context: context,
+    //       builder: (context) => AlertDialog(
+    //         title: Text('Error'),
+
+    //         content: Text('Ketersediaan tidak boleh kosong'),
+    //         actions: <Widget>[
+    //           TextButton(
+    //             child: Text('OK'),
+    //             onPressed: () => Navigator.of(context).pop(),
+    //           ),
+    //         ],
+    //       ),
+    //     );
+    //     return false;
+    //   }
+    //   if (kebutuhanC.text.isEmpty) {
+    //     showDialog(
+    //       context: context,
+    //       builder: (context) => AlertDialog(
+    //         title: Text('Error'),
+    //         content: Text('Kebutuhan tidak boleh kosong'),
+    //         actions: <Widget>[
+    //           TextButton(
+    //             child: Text('OK'),
+    //             onPressed: () => Navigator.of(context).pop(),
+    //           ),
+    //         ],
+    //       ),
+    //     );
+    //     return false;
+    //   }
+    //   if (hargaC.text.isEmpty) {
+    //     showDialog(
+    //       context: context,
+    //       builder: (context) => AlertDialog(
+    //         title: Text('Error'),
+    //         content: Text('Harga tidak boleh kosong'),
+    //         actions: <Widget>[
+    //           TextButton(
+    //             child: Text('OK'),
+    //             onPressed: () => Navigator.of(context).pop(),
+    //           ),
+    //         ],
+    //       ),
+    //     );
+    //     return false;
+    //   }
+    //   return true;
+    // }
 
     Widget inputSection() {
-      Widget title() {
-        return Container(
-          child: Column(
-            children: [
-              Text(
-                'Tambah data sayuran',
-                style: blackTextStyle.copyWith(
-                  fontSize: 16,
-                  fontWeight: semiBold,
-                ),
-              ),
-            ],
-          ),
-        );
-      }
+      // Widget title() {
+      //   return Container(
+      //     child: Column(
+      //       children: [
+      //         Text(
+      //           'Tambah data sayuran',
+      //           style: blackTextStyle.copyWith(
+      //             fontSize: 16,
+      //             fontWeight: semiBold,
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   );
+      // }
 
       Widget nama() {
         return CustomTextFromField(
@@ -82,8 +162,11 @@ class TambahDataPangan extends StatelessWidget {
             fontWeight: semiBold,
           ),
           onPressed: () {
-            // Navigator.pushNamed(context, '/draftdata');
-            store();
+            print(arguments['jenis_pangan_id']);
+
+            // if (validateInputs()) {
+            //   store();
+            // }
           },
         );
       }
@@ -91,7 +174,7 @@ class TambahDataPangan extends StatelessWidget {
       Widget kirimButton() {
         return CustomButton(
           title: 'Kirim',
-          width:MediaQuery.of(context).size.width,
+          width: MediaQuery.of(context).size.width,
           backgroundColor: kOrangeColor,
           textStyle: whiteTextStyle.copyWith(
             fontSize: 16,
@@ -115,7 +198,7 @@ class TambahDataPangan extends StatelessWidget {
         ),
         child: Column(
           children: [
-            title(),
+            // title(),
             nama(),
             ketersediaan(),
             kebutuhan(),
@@ -129,6 +212,7 @@ class TambahDataPangan extends StatelessWidget {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         centerTitle: true, // Menengahkan judul
         title: Text(

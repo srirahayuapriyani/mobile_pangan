@@ -1,4 +1,5 @@
 import 'package:apk/cubit/page_cubit.dart';
+import 'package:apk/service/preferencesService.dart';
 import 'package:apk/ui/pages/daftar_pangan.dart';
 import 'package:apk/ui/pages/detail_data.dart';
 import 'package:apk/ui/pages/ubah_data.dart';
@@ -9,18 +10,30 @@ import 'package:apk/ui/pages/profile.dart';
 import 'package:apk/ui/pages/tambah_data_pangan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ui/pages/login.dart';
 import 'ui/pages/main_page.dart';
 import 'ui/pages/splash_page.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // SharedPreferences prefs = await SharedPreferences.getInstance();
+  // bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+await PreferencesService().init();
+  bool isLoggedIn = PreferencesService().isLoggedIn;
+
+  runApp(MyApp(isLoggedIn: isLoggedIn));
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final bool isLoggedIn;
+
+  const MyApp({Key? key, required this.isLoggedIn}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    print(isLoggedIn);
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -29,6 +42,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        initialRoute: isLoggedIn ? '/main' : '/login',
         routes: {
           '/': (context) => SplashPage(),
           '/login': (context) => Login(),

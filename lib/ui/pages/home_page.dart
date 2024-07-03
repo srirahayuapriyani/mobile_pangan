@@ -1,3 +1,5 @@
+import "package:apk/models/jenis_pangan_model.dart";
+import "package:apk/service/jenis_pangan_service.dart";
 import "package:apk/shared/theme.dart";
 import "package:apk/ui/pages/daftar_pangan.dart";
 import "package:apk/ui/widgets/custom_text_form_field.dart";
@@ -7,9 +9,31 @@ import "package:flutter/material.dart";
 
 import 'section_title.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<JenisPangan>? jenisPanganItem; 
+  bool isLoading = false;
+  
+
+  @override
+  void initState() {
+    fetchJenisPangan();
+    super.initState();
+  }
+
+  void fetchJenisPangan() async{
+    isLoading = true;
+    jenisPanganItem =  await JenisPanganService().fetchJenisPangan();
+    setState(() {
+      isLoading = false;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     Widget header() {
@@ -64,21 +88,21 @@ class HomePage extends StatelessWidget {
       );
     }
 
-    Widget searchField() {
-      return const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: CustomTextFromField(
-          title: '',
-          hintText: 'Cari Pasar',
-          obscureText: false,
-          prefixIcon: Icon(Icons.search),
-        ),
-      );
-    }
+    // Widget searchField() {
+    //   return const Padding(
+    //     padding: EdgeInsets.symmetric(horizontal: 10),
+    //     child: CustomTextFromField(
+    //       title: '',
+    //       hintText: 'Cari Pasar',
+    //       obscureText: false,
+    //       prefixIcon: Icon(Icons.search),
+    //     ),
+    //   );
+    // }
 
     Widget inputData() {
       return Container(
-        margin: const EdgeInsets.only(top: 10),
+        margin: const EdgeInsets.only(top: 20),
         child: Row(
           children: [
             Container(
@@ -170,20 +194,17 @@ class HomePage extends StatelessWidget {
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  _buildJenisPanganItem('', 'assets/image_sayuran.png', context),
-                  _buildJenisPanganItem('', 'assets/image_buah.png', context),
-                  _buildJenisPanganItem('', 'assets/image_daging.png', context),
-                  _buildJenisPanganItem('', 'assets/image_pangan.png', context),
-                  _buildJenisPanganItem('', 'assets/image_sayuran.png', context),
-                  _buildJenisPanganItem('', 'assets/image_buah.png', context),
-                  _buildJenisPanganItem('', 'assets/image_daging.png', context),
-                  _buildJenisPanganItem('', 'assets/image_sayuran.png', context),
-                  _buildJenisPanganItem('', 'assets/image_buah.png', context),
-                  _buildJenisPanganItem('', 'assets/image_daging.png', context),
-                ],
-              ),
+              child:isLoading? Center(child: CircularProgressIndicator(),) :Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: jenisPanganItem?.map((jenis) {
+              return GestureDetector(
+                onTap: () {
+                },
+                child: _buildJenisPanganItem('', "assets/${jenis.name}.png", context),
+              );
+            }).toList() ?? [],
+          ),
             ),
           ],
         ),
@@ -234,7 +255,7 @@ class HomePage extends StatelessWidget {
     return ListView(
       children: [
         header(),
-        searchField(),
+        // searchField(),
         inputData(),
         jenisPangan(),
         riwayatData(),

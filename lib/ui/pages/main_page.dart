@@ -1,4 +1,5 @@
 import 'package:apk/cubit/page_cubit.dart';
+import 'package:apk/service/preferencesService.dart';
 import 'package:apk/ui/pages/home_page.dart';
 import 'package:apk/ui/pages/layanan.dart';
 import 'package:apk/ui/pages/profile.dart';
@@ -12,6 +13,7 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(PreferencesService().isLoggedIn);
     Widget buildContent(int currentIndex) {
       switch (currentIndex) {
         case 0:
