@@ -52,7 +52,7 @@ class RiwayatDataHome extends StatelessWidget {
                     // Aksi yang ingin dilakukan ketika tombol ditekan
                   },
                   backgroundColor:
-                      kBlueColor2, // Atur warna latar belakang sesuai keinginan
+                      kGreenColor, // Atur warna latar belakang sesuai keinginan
                   borderRadius: 30, // Atur nilai border radius sesuai keinginan
                 ),
                 SizedBox(height: 10),

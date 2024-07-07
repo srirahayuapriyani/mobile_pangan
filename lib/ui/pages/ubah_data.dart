@@ -32,26 +32,26 @@ class UbahData extends StatelessWidget {
             //       kBlueColor2, // Atur warna latar belakang sesuai keinginan
             //   borderRadius: 30, // Atur nilai border radius sesuai keinginan
             // ),
-            Text(
-              'Ubah Data Beras',
-              style: blackTextStyle.copyWith(
-                fontSize: 16,
-                fontWeight: semiBold,
-              ),
-            ),
+            // Text(
+            //   'Ubah Data Beras',
+            //   style: blackTextStyle.copyWith(
+            //     fontSize: 16,
+            //     fontWeight: semiBold,
+            //   ),
+            // ),
             SizedBox(height: 10),
             const CustomTextFromField(
-              title: 'Nama',
+              title: 'Nama Pangan',
               hintText: 'Masukan Nama Pangan',
             ),
             const CustomTextFromField(
-              title: 'Ketersediaan',
+              title: 'Persediaan',
               hintText: 'Masukan Ketersediaan',
             ),
-            const CustomTextFromField(
-              title: 'kebutuhan',
-              hintText: 'Masukan kebutuhan',
-            ),
+            // const CustomTextFromField(
+            //   title: 'kebutuhan',
+            //   hintText: 'Masukan kebutuhan',
+            // ),
             const CustomTextFromField(
               title: 'Harga',
               hintText: 'Masukan harga',

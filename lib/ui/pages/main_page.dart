@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../shared/theme.dart';
 
 class MainPage extends StatelessWidget {
-  const MainPage({Key? key}) : super(key: key);
+  const MainPage({Key? key, String password = "", String username = ""}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

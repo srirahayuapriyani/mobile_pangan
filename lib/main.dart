@@ -57,6 +57,30 @@ class MyApp extends StatelessWidget {
           '/layanan': (context) => Layanan(),
           '/profile': (context) => Profile(),
         },
+   onGenerateRoute: (settings) {
+          if (settings.name == '/main') {
+            final args = settings.arguments as Map<String, String>;
+            return MaterialPageRoute(
+              builder: (context) {
+                return MainPage(
+                  username: args['username']!,
+                  password: args['password']!,
+                );
+              },
+            );
+          } else if (settings.name == '/profile') {
+            final args = settings.arguments as Map<String, String>;
+            return MaterialPageRoute(
+              builder: (context) {
+                return Profile(
+                  username: args['username']!,
+                  password: args['password']!,
+                );
+              },
+            );
+          }
+          return null;
+        },
       ),
     );
   }

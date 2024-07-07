@@ -13,6 +13,7 @@ Color kSemiWhiteColor = Color(0xffEDEDED);
 Color kOrangeColor = Color(0xffF6995C);
 Color kRedColor = Color(0xffEF6262);
 Color kBlueColor2 = Color(0xffD0E7F3);
+Color kGreenColor =Color(0xffD6EFD8);
 Color kTransparentColor = Colors.transparent;
 
 

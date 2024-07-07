@@ -1,15 +1,16 @@
 class TambahData {
   final int id;
   final String namaPangan;
-  final String ketersediaan;
-  final String kebutuhan;
+  final String persediaan;
+  // final String kebutuhan;
   final String harga;
+  
 
   TambahData({
     required this.id,
     required this.namaPangan,
-    required this.ketersediaan,
-    required this.kebutuhan,
+    required this.persediaan,
+    // required this.kebutuhan,
     required this.harga,
   });
 
@@ -17,8 +18,8 @@ class TambahData {
     return TambahData(
       id: json["id"],
       namaPangan: json['namaPangan'],
-      ketersediaan: json['ketersediaan'],
-      kebutuhan: json['kebutuhan'],
+      persediaan: json['persediaan'],
+      // kebutuhan: json['kebutuhan'],
       harga: json['harga'],
     );
   }
@@ -27,8 +28,8 @@ class TambahData {
     return {
       'id ' : id,
       'nama': namaPangan,
-      'ketersediaan': ketersediaan,
-      'kebutuhan': kebutuhan,
+      'persesiaan': persediaan,
+      // 'kebutuhan': kebutuhan,
       'harga': harga,
     };
   }

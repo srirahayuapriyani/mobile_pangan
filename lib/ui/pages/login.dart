@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:apk/service/preferencesService.dart';
 import 'package:apk/ui/widgets/custom_button.dart';
 import 'package:apk/ui/widgets/custom_text_form_field.dart';
@@ -6,14 +8,19 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../shared/theme.dart';
 
-class Login extends StatelessWidget {
-  const Login({Key? key}) : super(key: key);
+class Login extends StatefulWidget {
+  const Login({super.key});
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  final TextEditingController username = TextEditingController();
+  final TextEditingController password = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController username = TextEditingController();
-    TextEditingController password = TextEditingController();
-
     Widget title() {
       return Container(
         margin: EdgeInsets.only(top: 30),
@@ -51,15 +58,17 @@ class Login extends StatelessWidget {
           options: Options(headers: {'Accept': 'application/json'}));
 
       if (response.statusCode == 200) {
-        print(response.data);
 
         // SharedPreferences prefs = await SharedPreferences.getInstance();
         // await prefs.setBool('isLoggedIn', true);
         await PreferencesService().setLoggedIn(true);
+        await PreferencesService().setUsername(username.text);
 
-
-        // ignore: use_build_context_synchronously
-        Navigator.pushNamed(context, '/main');
+        Navigator.pushReplacementNamed(
+          context,
+          '/main',
+          arguments: {'username': username.text, 'password': password.text},
+        );
       } else {
         print(response.statusMessage);
       }
@@ -101,8 +110,8 @@ class Login extends StatelessWidget {
             fontWeight: semiBold,
           ),
           onPressed: () {
+            log("pres");
             loginProcess();
-            // Navigator.pushNamed(context, '/main');
           },
         );
       }

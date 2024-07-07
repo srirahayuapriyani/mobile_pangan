@@ -1,5 +1,6 @@
 import 'dart:async'; // Tambahkan ini untuk menggunakan Timer
 import 'package:flutter/material.dart';
+import 'package:apk/service/preferencesService.dart';
 import '../../shared/theme.dart';
 
 class SplashPage extends StatefulWidget {
@@ -12,10 +13,24 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
-    Timer(Duration(seconds: 3), () {
-      Navigator.pushNamed(context, '/login');
-    });
     super.initState();
+
+    // Pastikan PreferencesService telah diinisialisasi
+    _navigateToNextPage();
+  }
+
+  Future<void> _navigateToNextPage() async {
+
+    await Future.delayed(Duration(seconds: 3));
+    bool isLoggedIn = PreferencesService().isLoggedIn;
+      if (isLoggedIn) {
+        Navigator.pushReplacementNamed(context, '/main', arguments: {
+        'username': PreferencesService().getUsername(),
+        'password': PreferencesService().getPassword(),
+        });
+      } else {
+        Navigator.pushReplacementNamed(context, '/login');
+      }
   }
 
   @override
@@ -51,11 +66,10 @@ class _SplashPageState extends State<SplashPage> {
             Container(
               margin: EdgeInsets.symmetric(horizontal: 25),
               child: Text(
-                'Aplikasi ini dibuat untuk membantu petugas pasar memasukan data pangan dan mengelola data pangan. ',
+                'Aplikasi ini dibuat untuk membantu petugas pasar memasukan data pangan dan mengelola data pangan.',
                 style: blackTextStyle.copyWith(
-                  // Ubah menjadi blackTextStyle
                   fontSize: 12,
-                  fontWeight: reguler, // Ubah menjadi regular
+                  fontWeight: reguler,
                 ),
                 textAlign: TextAlign.center,
               ),

@@ -10,17 +10,22 @@ class CustomTextFromField extends StatelessWidget {
   final TextEditingController? controller;
   final TextInputType? inputType;
   final String? Function(String?)? validator;
+  final bool readOnly;
+  
+  
 
   const CustomTextFromField({
     Key? key,
     required this.title,
     required this.hintText,
+    
     this.obscureText = false,
     this.decoration,
     this.validator, // Tambahkan tanda '?' agar dekorasi menjadi opsional
     this.prefixIcon,
     this.controller,
-    this.inputType, // Tambahkan tanda '?' agar prefixIcon menjadi opsional
+    this.inputType,
+    this. readOnly = false, // Tambahkan tanda '?' agar prefixIcon menjadi opsional
   }) : super(key: key);
 
   @override
@@ -44,9 +49,6 @@ class CustomTextFromField extends StatelessWidget {
             height: 6,
           ),
           TextFormField(
-            onSaved: (a){
-              controller?.text = a.toString();
-            },
             keyboardType: inputType,
             controller: controller,
             cursorColor: kBlackColor,
