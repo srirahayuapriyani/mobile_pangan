@@ -3,8 +3,11 @@ import 'package:apk/ui/pages/detail_data.dart';
 import 'package:apk/ui/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 
-class DraftRiwayatData extends StatelessWidget {
+// ignore: must_be_immutable
+class draftDataPanganTersimpan extends StatelessWidget {
   final String title1;
+  bool? isButtonVisible;
+  bool status;
   final String title2;
   // final String title3;
   final String title4;
@@ -13,8 +16,8 @@ class DraftRiwayatData extends StatelessWidget {
   // final valueText3;
   final valueText4;
 
-  const DraftRiwayatData({
-    Key? key,
+   draftDataPanganTersimpan({
+    super.key,
     required this.title1,
     required this.title2,
     // required this.title3,
@@ -23,7 +26,9 @@ class DraftRiwayatData extends StatelessWidget {
     required this.valueText2,
     // required this.valueText3,
     required this.valueText4,
-  }) : super(key: key);
+    required this.status,
+    this.isButtonVisible = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +164,13 @@ class DraftRiwayatData extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 10),
-                Row(
+
+                status! ? 
+                Text(
+                  "Terkirim",
+                  style: TextStyle(color: Colors.green),
+                ) : SizedBox(),
+                isButtonVisible! ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     CustomButton(
@@ -181,20 +192,20 @@ class DraftRiwayatData extends StatelessWidget {
                     CustomButton(
                       width: 140,
                       height: 39, // Panggil CustomButton di sini
-                      title: 'Kirim',
+                      title: 'Hapus',
                       textStyle: whiteTextStyle.copyWith(
                         fontSize: 16,
                         fontWeight: medium,
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context,
-                            '/kirimdataberhasil'); // Aksi yang ingin dilakukan ketika tombol ditekan
+                        // Navigator.pushNamed(context,
+                        //     '/kirimdataberhasil'); // Aksi yang ingin dilakukan ketika tombol ditekan
                       },
-                      backgroundColor: kOrangeColor,
+                      backgroundColor: kRedColor,
                       borderRadius: 5,
                     ),
                   ],
-                ),
+                ) : SizedBox(),
               ],
             ),
           ),

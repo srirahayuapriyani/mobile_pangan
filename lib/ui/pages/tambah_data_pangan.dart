@@ -284,8 +284,8 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   title: 'Nama Pangan',
                   hintText: 'Masukan nama pangan',
                   validator: (value) {
-                    return value == null || value.isEmpty
-                        ? "nama pangan tidak boleh kosong"
+                    return value!.isEmpty
+                        ? "Nama pangan tidak boleh kosong"
                         : null;
                   },
                 ),
@@ -293,6 +293,11 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   controller: persediaanC,
                   title: 'persediaan',
                   hintText: 'Masukan jumlah ketersediaan',
+                  validator: (value) {
+                    return  value!.isEmpty
+                        ? "Persediaan tidak boleh kosong"
+                        : null;
+                  },
                 ),
                 // CustomTextFromField(
                 //   controller: kebutuhanC,
@@ -303,6 +308,11 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   controller: hargaC,
                   title: 'Harga',
                   hintText: 'Masukan jumlah harga ',
+                  validator: (value) {
+                    return value!.isEmpty
+                        ? "Harga tidak boleh kosong"
+                        : null;
+                  },
                 ),
                 CustomButton(
                   width: MediaQuery.of(context).size.width,
@@ -314,7 +324,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       Navigator.pushNamed(context, '/draftdata');
-                      // print(arguments['jenis_pangan_id']);
+                      // // print(arguments['jenis_pangan_id']);
                       store();
                     }
 

@@ -2,6 +2,7 @@ import 'package:apk/cubit/page_cubit.dart';
 import 'package:apk/service/preferencesService.dart';
 import 'package:apk/ui/pages/daftar_pangan.dart';
 import 'package:apk/ui/pages/detail_data.dart';
+import 'package:apk/ui/pages/riwayat_data_terkirim.dart';
 import 'package:apk/ui/pages/ubah_data.dart';
 import 'package:apk/ui/pages/kirim_data_berhasil.dart';
 import 'package:apk/ui/pages/layanan.dart';
@@ -20,7 +21,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // SharedPreferences prefs = await SharedPreferences.getInstance();
   // bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-await PreferencesService().init();
+  await PreferencesService().init();
   bool isLoggedIn = PreferencesService().isLoggedIn;
 
   runApp(MyApp(isLoggedIn: isLoggedIn));
@@ -56,8 +57,9 @@ class MyApp extends StatelessWidget {
           '/kirimdataberhasil': (context) => KirimDataBerhasil(),
           '/layanan': (context) => Layanan(),
           '/profile': (context) => Profile(),
+          '/riwayatdataterkirim': (context) => RiwayatDataTerkirim(),
         },
-   onGenerateRoute: (settings) {
+        onGenerateRoute: (settings) {
           if (settings.name == '/main') {
             final args = settings.arguments as Map<String, String>;
             return MaterialPageRoute(

@@ -3,7 +3,7 @@ import "package:apk/service/jenis_pangan_service.dart";
 import "package:apk/shared/theme.dart";
 import "package:apk/ui/pages/daftar_pangan.dart";
 import "package:apk/ui/widgets/custom_text_form_field.dart";
-import "package:apk/ui/widgets/riwayat_data_home.dart";
+import "package:apk/ui/widgets/riwayat_data_terkirim.dart.dart";
 
 import "package:flutter/material.dart";
 
@@ -227,23 +227,23 @@ class _HomePageState extends State<HomePage> {
                   fontWeight: semiBold,
                 ),
                 press: () {
-                  Navigator.pushNamed(context, '/draftdata');
+                  Navigator.pushNamed(context, '/riwayatdataterkirim');
                 },
               ),
             ),
-            const RiwayatDataHome(
+            const RiwayatDataTerkirim(
               alamat:
                   'Bulak, Kec. Jatibarang, Kabupaten\nIndramayu,Jawa Barat 45273',
             ),
-            const RiwayatDataHome(
+            const RiwayatDataTerkirim(
               alamat:
                   'Bulak, Kec. Jatibarang, Kabupaten\nIndramayu,Jawa Barat 45273',
             ),
-            const RiwayatDataHome(
+            const RiwayatDataTerkirim(
               alamat:
                   'Bulak, Kec. Jatibarang, Kabupaten\nIndramayu,Jawa Barat 45273',
             ),
-            const RiwayatDataHome(
+            const RiwayatDataTerkirim(
               alamat:
                   'Bulak, Kec. Jatibarang, Kabupaten\nIndramayu,Jawa Barat 45273',
             ), // Tambahkan widget lain untuk riwayat pasar di sini

@@ -53,6 +53,7 @@ class CustomTextFromField extends StatelessWidget {
             controller: controller,
             cursorColor: kBlackColor,
             obscureText: obscureText,
+            validator: validator,
             style: TextStyle(
               fontSize: 14,
               color: kBlackColor,
@@ -79,6 +80,7 @@ class CustomTextFromField extends StatelessWidget {
               contentPadding:
                   EdgeInsets.symmetric(vertical: 10, horizontal: 12),
               prefixIcon: prefixIcon, // Atur ukuran kotak form di sini
+              
             ),
           ),
         ],
