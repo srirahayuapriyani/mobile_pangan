@@ -63,6 +63,8 @@ class _LoginState extends State<Login> {
         // await prefs.setBool('isLoggedIn', true);
         await PreferencesService().setLoggedIn(true);
         await PreferencesService().setUsername(username.text);
+        await PreferencesService().setId(response.data['data']['id']);
+        await PreferencesService().setPasarId(response.data['data']['detail']['pasar_id']);
 
         Navigator.pushReplacementNamed(
           context,

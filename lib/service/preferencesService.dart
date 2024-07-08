@@ -6,6 +6,8 @@ class PreferencesService {
   static const _keyIsLoggedIn = 'isLoggedIn';
   static const _keyUsername = 'username';
   static const _keyPassword = 'password';
+  static const _keyId = 'id';
+  static const _keyPasarId = 'pasarId';
 
   Future<void> init() async {
     _preferences = await SharedPreferences.getInstance();
@@ -27,5 +29,17 @@ class PreferencesService {
 
   Future<void> setPassword(String value) async {
     await _preferences?.setString(_keyPassword, value);
+  }
+
+  String getId() => _preferences?.getString(_keyId) ?? '';
+
+  Future<void> setId(String value) async {
+    await _preferences?.setString(_keyId, value);
+  }
+
+  String getPasarId() => _preferences?.getString(_keyPasarId) ?? '';
+
+  Future<void> setPasarId(String value) async {
+    await _preferences?.setString(_keyPasarId, value);
   }
 }

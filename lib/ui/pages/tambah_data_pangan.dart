@@ -228,9 +228,11 @@
 
 import 'dart:convert';
 
+import 'package:apk/service/preferencesService.dart';
 import 'package:apk/shared/theme.dart';
 import 'package:apk/ui/widgets/custom_button.dart';
 import 'package:apk/ui/widgets/custom_text_form_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -248,24 +250,56 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
   // TextEditingController kebutuhanC = TextEditingController();
   TextEditingController hargaC = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  final Dio _dio = Dio(); 
 
-  Future<void> store() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+   Future<void> store(int jId,int status) async {
+
     var data = {
-      'nama': namapanganC.text,
-      'ketersediaan': persediaanC.text,
-      // 'kebutuhan': kebutuhanC.text,
+      'user_id': PreferencesService().getId(),
+      'pasar_id': PreferencesService().getPasarId(),
+      'jenis_pangan_id': jId.toString(),
+      'name': namapanganC.text,
+      'stok': persediaanC.text,
       'harga': hargaC.text,
-      'tanggal': DateFormat.yMMMMEEEEd().add_jm().format(DateTime.now()),
+      'date': getCurrentDateFormatted(),
+      'status': status,
     };
+
+    print(data);
+
+    try {
+      Response response = await _dio.post(
+        'https://sintrenayu.com/api/pangan/store', // Ganti dengan URL endpoint API Anda
+        data: data,
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+      print(response);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Data berhasil disimpan');
+        Navigator.pushNamed(context, '/draftdata');
+        // Lakukan sesuatu jika data berhasil disimpan
+      } else {
+        print('Gagal menyimpan data');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  String getCurrentDateFormatted() {
+  DateTime now = DateTime.now();
+  DateFormat formatter = DateFormat('yyyy-MM-dd');
+  return formatter.format(now);
+}
+    
     // print(arguments['jenis_pangan_id']);
     // print(data.toString());
-    List<String> dataList = prefs.getStringList('data_pangan') ?? [];
-    dataList.add(jsonEncode(data));
-    await prefs.setStringList('data_pangan', dataList);
+    // List<String> dataList = prefs.getStringList('data_pangan') ?? [];
+    // dataList.add(jsonEncode(data));
+    // await prefs.setStringList('data_pangan', dataList);
 
-    print(data.toString());
-  }
+    // print(data.toString());
+  
 
   @override
   Widget build(BuildContext context) {
@@ -323,9 +357,11 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   ),
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      Navigator.pushNamed(context, '/draftdata');
+                      // Navigator.pushNamed(context, '/draftdata');
                       // // print(arguments['jenis_pangan_id']);
-                      store();
+  final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+                      store(arguments!['jenis_pangan_id'], 0);
                     }
 
                     // if (validateInputs()) {
