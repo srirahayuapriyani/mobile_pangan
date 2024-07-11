@@ -3,7 +3,7 @@ import 'package:apk/service/preferencesService.dart';
 import 'package:apk/ui/pages/daftar_pangan.dart';
 import 'package:apk/ui/pages/detail_data.dart';
 import 'package:apk/ui/pages/riwayat_data_terkirim.dart';
-import 'package:apk/ui/pages/ubah_data.dart';
+import 'package:apk/ui/pages/edit_data.dart';
 import 'package:apk/ui/pages/kirim_data_berhasil.dart';
 import 'package:apk/ui/pages/layanan.dart';
 import 'package:apk/ui/pages/draft_data.dart';
@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
           'layanan': (context) => Layanan(),
           '/daftarpangan': (context) => DaftarPangan(),
           '/detaildata': (context) => DetailData(),
-          '/ubahdata': (context) => UbahData(),
+          '/editdata': (context) => EditData(),
           '/draftdata': (context) => DraftData(),
           '/tambahdatapangan': (context) => TambahDataPangan(),
           '/kirimdataberhasil': (context) => KirimDataBerhasil(),

@@ -1,11 +1,13 @@
 import 'package:apk/shared/theme.dart';
 import 'package:apk/ui/pages/detail_data.dart';
 import 'package:apk/ui/widgets/custom_button.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class draftDataPanganTersimpan extends StatelessWidget {
   final String title1;
+  final String id;
   bool? isButtonVisible;
   bool status;
   final String title2;
@@ -15,8 +17,9 @@ class draftDataPanganTersimpan extends StatelessWidget {
   final valueText2;
   // final valueText3;
   final valueText4;
+  final VoidCallback? onDelete;
 
-   draftDataPanganTersimpan({
+  draftDataPanganTersimpan({
     super.key,
     required this.title1,
     required this.title2,
@@ -28,7 +31,55 @@ class draftDataPanganTersimpan extends StatelessWidget {
     required this.valueText4,
     required this.status,
     this.isButtonVisible = true,
+    required this.id,
+    this.onDelete,
   });
+
+  Future<Response> deleteDataPangan(String id) async {
+    try {
+      final dio = Dio();
+      final response = await dio.delete(
+        'https://sintrenayu.com/api/pangan/deleteDetailById/$id',
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+
+      // if (response.statusCode != 200) {
+      //   throw Exception('Failed to delete data');
+      // }
+      print(response.data);
+      return response;
+    } catch (e) {
+      print('Error deleting data: $e');
+      throw e;
+    }
+  }
+
+  Future<bool> validateInputs(BuildContext context) async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Konfirmasi'),
+              content: Text('Apakah Anda yakin ingin menghapus data ini?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false); // Return false
+                  },
+                  child: Text('Batal'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true); // Return true
+                  },
+                  child: Text('Ya'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false; // Return false if the dialog is dismissed
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +112,7 @@ class draftDataPanganTersimpan extends StatelessWidget {
                 CustomButton(
                   width: 191,
                   height: 35, // Panggil CustomButton di sini
-                  title: 'Sab, 20 April 2024',
+                  title: 'Sab, 20\April 2024',
                   textStyle: blueTextStyle.copyWith(
                     fontSize: 16,
                     fontWeight: medium,
@@ -165,47 +216,66 @@ class draftDataPanganTersimpan extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
 
-                status! ? 
-                Text(
-                  "Terkirim",
-                  style: TextStyle(color: Colors.green),
-                ) : SizedBox(),
-                isButtonVisible! ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    CustomButton(
-                      width: 150,
-                      height: 39, // Panggil CustomButton di sini
-                      title: 'Edit',
-                      textStyle: blueTextStyle.copyWith(
-                        fontSize: 16,
-                        fontWeight: medium,
-                      ),
-                      onPressed: () {
-                        Navigator.pushNamed(context,
-                            '/ubahdata'); // Aksi yang ingin dilakukan ketika tombol ditekan
-                      },
-                      backgroundColor: kBlueColor2,
-                      borderRadius: 5,
-                    ),
-                    Spacer(),
-                    CustomButton(
-                      width: 140,
-                      height: 39, // Panggil CustomButton di sini
-                      title: 'Hapus',
-                      textStyle: whiteTextStyle.copyWith(
-                        fontSize: 16,
-                        fontWeight: medium,
-                      ),
-                      onPressed: () {
-                        // Navigator.pushNamed(context,
-                        //     '/kirimdataberhasil'); // Aksi yang ingin dilakukan ketika tombol ditekan
-                      },
-                      backgroundColor: kRedColor,
-                      borderRadius: 5,
-                    ),
-                  ],
-                ) : SizedBox(),
+                status!
+                    ? Text(
+                        "Terkirim",
+                        style: TextStyle(color: Colors.green),
+                      )
+                    : SizedBox(),
+                isButtonVisible!
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          CustomButton(
+                            width: 150,
+                            height: 39, // Panggil CustomButton di sini
+                            title: 'Edit',
+                            textStyle: blueTextStyle.copyWith(
+                              fontSize: 16,
+                              fontWeight: medium,
+                            ),
+                            onPressed: () {
+                              Navigator.pushNamed(context,
+                                  '/editdata', arguments: {'nama':valueText1,'persediaan':valueText2,'harga':valueText4, 'id':id}); // Aksi yang ingin dilakukan ketika tombol ditekan
+                            },
+                            backgroundColor: kBlueColor2,
+                            borderRadius: 5,
+                          ),
+                          Spacer(),
+                          CustomButton(
+                            width: 140,
+                            height: 39, // Panggil CustomButton di sini
+                            title: 'Hapus',
+                            textStyle: whiteTextStyle.copyWith(
+                              fontSize: 16,
+                              fontWeight: medium,
+                            ),
+                        onPressed: () async {
+                              bool isConfirmed =
+                                  await validateInputs(context);
+                              if (isConfirmed) {
+                                var response =
+                                    await deleteDataPangan(id);
+                                if (response.statusCode == 200) {
+                                  onDelete?.call(); // Panggil callback onDelete untuk mengaktifkan SnackBar
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Failed to delete data')),
+                                  );
+                                }
+                              } else {
+                                Navigator.of(context).pop();
+                              }
+                            },
+                            backgroundColor: kRedColor,
+                            borderRadius: 5,
+                          ),
+                        ],
+                      )
+                    : SizedBox(),
               ],
             ),
           ),

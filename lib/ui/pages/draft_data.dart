@@ -1,12 +1,14 @@
 import 'dart:convert';
 
+import 'package:apk/service/preferencesService.dart';
 import 'package:apk/ui/widgets/draft_data_tersimpan.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:apk/shared/theme.dart';
 import 'package:apk/ui/widgets/custom_text_form_field.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Perbaikan: Mengimport CustomTextFromField
 
-class DraftData extends StatelessWidget {
+class DraftData extends StatefulWidget {
   const DraftData({Key? key}) : super(key: key);
 
   // Perbaikan: Memindahkan deklarasi searchField ke luar metode build
@@ -21,12 +23,53 @@ class DraftData extends StatelessWidget {
   //     ),
   //   );
   // }
-    Future<List<Map<String, dynamic>>> getTambahDataPangan() async{
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      List<String> dataList = prefs.getStringList('data_pangan') ?? [];
-    List<Map<String, dynamic>> data = dataList.map((item) => jsonDecode(item) as Map<String, dynamic>).toList();
-      return data;
+  @override
+  _DraftDataState createState() => _DraftDataState();
+}
+
+class _DraftDataState extends State<DraftData> {
+  Future<List<Map<String, dynamic>>> fetchTambahDataPangan() async {
+    try {
+      final dio = Dio();
+      final userId = await PreferencesService().getId();
+      final response = await dio.get(
+        'https://sintrenayu.com/api/pangan/showByUser/$userId',
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+
+      print(response.data);
+
+      if (response.statusCode == 200) {
+        var data = response.data;
+        if (data is Map<String, dynamic> && data.containsKey('data')) {
+          List<dynamic> dataList = data['data'];
+          return dataList.map((item) => item as Map<String, dynamic>).toList();
+        } else {
+          throw Exception('Invalid data format');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+      return [];
     }
+  }
+
+  void onDeleteCallback() {
+    // Pembaruan state setelah penghapusan
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Data berhasil dihapus'),
+      ),
+    );
+    Navigator.of(context).pushReplacementNamed('/draftdata');
+  }
+
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   List<String> dataList = prefs.getStringList('data_pangan') ?? [];
+  // List<Map<String, dynamic>> data = dataList.map((item) => jsonDecode(item) as Map<String, dynamic>).toList();
+  //   return data;
 
   @override
   Widget build(BuildContext context) {
@@ -39,16 +82,17 @@ class DraftData extends StatelessWidget {
         ),
       ),
       body: FutureBuilder(
-        future: getTambahDataPangan(),
+        future: fetchTambahDataPangan(),
         builder: ((context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError){
+          } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || (snapshot.data as List).isEmpty){
+          } else if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
             return Center(child: Text('No Data Found'));
-          }  else {
-            List<Map<String, dynamic>> data_pangan = snapshot.data as List<Map<String, dynamic>>;
+          } else {
+            List<Map<String, dynamic>> data_pangan =
+                snapshot.data as List<Map<String, dynamic>>;
             return SingleChildScrollView(
               child: Container(
                 color: kPrimaryColor,
@@ -58,27 +102,29 @@ class DraftData extends StatelessWidget {
                   children: [
                     SizedBox(height: 10),
                     for (var item in data_pangan)
-                    draftDataPanganTersimpan(
-                      status: false,
-                      title1: 'Nama Pangan',
-                      valueText1: item['Nama Pangan'],
-                      title2: 'Persediaan',
-                      valueText2: item['Persediaan'],
-                      title4: 'Harga',
-                      valueText4: item['Harga (Rp/Kg)'],
-                    ),
+                      draftDataPanganTersimpan(
+                        status: false,
+                        title1: 'Nama Pangan',
+                        valueText1: item['name'],
+                        title2: 'Persediaan',
+                        valueText2: item['stok'],
+                        title4: 'Harga',
+                        valueText4: item['harga'],
+                        id: item['id'].toString(),
+                        onDelete: onDeleteCallback,
+                      ),
                   ],
                 ),
               ),
             );
           }
-        }
+        }),
       ),
-    ),
     );
-        
   }
 }
+  
+
         
 //       body: SingleChildScrollView(
 //         child: Container(

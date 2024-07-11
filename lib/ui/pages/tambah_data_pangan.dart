@@ -250,10 +250,9 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
   // TextEditingController kebutuhanC = TextEditingController();
   TextEditingController hargaC = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  final Dio _dio = Dio(); 
+  final Dio _dio = Dio();
 
-   Future<void> store(int jId,int status) async {
-
+  Future<void> store(int jId, int status) async {
     var data = {
       'user_id': PreferencesService().getId(),
       'pasar_id': PreferencesService().getPasarId(),
@@ -273,7 +272,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
         data: data,
         options: Options(headers: {'Accept': 'application/json'}),
       );
-      print(response);
+      print('this is response ${response.data}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Data berhasil disimpan');
         Navigator.pushNamed(context, '/draftdata');
@@ -287,19 +286,18 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
   }
 
   String getCurrentDateFormatted() {
-  DateTime now = DateTime.now();
-  DateFormat formatter = DateFormat('yyyy-MM-dd');
-  return formatter.format(now);
-}
-    
-    // print(arguments['jenis_pangan_id']);
-    // print(data.toString());
-    // List<String> dataList = prefs.getStringList('data_pangan') ?? [];
-    // dataList.add(jsonEncode(data));
-    // await prefs.setStringList('data_pangan', dataList);
+    DateTime now = DateTime.now();
+    DateFormat formatter = DateFormat('yyyy-MM-dd');
+    return formatter.format(now);
+  }
 
-    // print(data.toString());
-  
+  // print(arguments['jenis_pangan_id']);
+  // print(data.toString());
+  // List<String> dataList = prefs.getStringList('data_pangan') ?? [];
+  // dataList.add(jsonEncode(data));
+  // await prefs.setStringList('data_pangan', dataList);
+
+  // print(data.toString());
 
   @override
   Widget build(BuildContext context) {
@@ -328,7 +326,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   title: 'persediaan',
                   hintText: 'Masukan jumlah ketersediaan',
                   validator: (value) {
-                    return  value!.isEmpty
+                    return value!.isEmpty
                         ? "Persediaan tidak boleh kosong"
                         : null;
                   },
@@ -343,9 +341,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   title: 'Harga',
                   hintText: 'Masukan jumlah harga ',
                   validator: (value) {
-                    return value!.isEmpty
-                        ? "Harga tidak boleh kosong"
-                        : null;
+                    return value!.isEmpty ? "Harga tidak boleh kosong" : null;
                   },
                 ),
                 CustomButton(
@@ -359,7 +355,9 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                     if (formKey.currentState!.validate()) {
                       // Navigator.pushNamed(context, '/draftdata');
                       // // print(arguments['jenis_pangan_id']);
-  final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+                      final arguments = ModalRoute.of(context)
+                          ?.settings
+                          .arguments as Map<String, dynamic>?;
 
                       store(arguments!['jenis_pangan_id'], 0);
                     }
