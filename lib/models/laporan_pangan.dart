@@ -1,6 +1,7 @@
 import 'package:apk/models/jenis_pangan_model.dart';
 import 'package:apk/models/pasar_model.dart';
 import 'package:apk/models/subjenis_pangan_model.dart';
+import 'package:apk/models/user_model.dart';
 
 class LaporanPangan {
   final int id;
@@ -17,6 +18,7 @@ class LaporanPangan {
   final Pasar pasar;
   final JenisPangan jenisPangan;
   final SubjenisPangan subjenisPangan;
+  final User user;
 
   LaporanPangan({
     required this.id,
@@ -33,6 +35,7 @@ class LaporanPangan {
     required this.pasar,
     required this.jenisPangan,
     required this.subjenisPangan,
+    required this.user,
   });
 
   factory LaporanPangan.fromJson(Map<String, dynamic> json) {
@@ -51,6 +54,7 @@ class LaporanPangan {
       pasar: Pasar.fromJson(json['pasar']),
       jenisPangan: JenisPangan.fromJson(json['jenis_pangan']),
       subjenisPangan: SubjenisPangan.fromJson(json['subjenis_pangan']),
+      user: User.fromJson(json['user']),
     );
   }
 }

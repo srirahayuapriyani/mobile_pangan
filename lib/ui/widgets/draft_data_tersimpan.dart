@@ -1,3 +1,4 @@
+import 'package:apk/models/laporan_pangan.dart';
 import 'package:apk/models/subjenis_pangan_model.dart';
 import 'package:apk/shared/theme.dart';
 import 'package:apk/ui/pages/detail_data.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 // ignore: must_be_immutable
 class draftDataPanganTersimpan extends StatelessWidget {
   final String title1;
+  final LaporanPangan laporanPangan;
 
   final SubjenisPangan? subjenisPangan;
   final String? jenis_pangan_id; 
@@ -36,7 +38,7 @@ class draftDataPanganTersimpan extends StatelessWidget {
     required this.status,
     this.isButtonVisible = true,
     required this.id,
-    this.onDelete,  this.jenis_pangan_id,  this.subjenisPangan,
+    this.onDelete,  this.jenis_pangan_id,  this.subjenisPangan, required this.laporanPangan,
   });
 
   Future<Response> deleteDataPangan(String id) async {
@@ -89,12 +91,7 @@ class draftDataPanganTersimpan extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DetailData(),
-          ),
-        );
+        Navigator.pushNamed(context, '/detaildata', arguments: {'laporan_pangan': laporanPangan});
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

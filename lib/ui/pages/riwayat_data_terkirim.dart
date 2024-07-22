@@ -1,3 +1,4 @@
+import 'package:apk/models/laporan_pangan.dart';
 import 'package:apk/service/preferencesService.dart';
 import 'package:apk/ui/widgets/draft_data_tersimpan.dart';
 import 'package:dio/dio.dart';
@@ -19,7 +20,7 @@ class RiwayatDataTerkirim extends StatelessWidget {
   //     ),
   //   );
   // }
-  Future<List<Map<String, dynamic>>> getTambahDataPangan() async {
+  Future<List<LaporanPangan>> getTambahDataPangan() async {
     try {
       final dio = Dio();
       final userId = await PreferencesService().getId();
@@ -28,13 +29,16 @@ class RiwayatDataTerkirim extends StatelessWidget {
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
-      // print(" ini data ${response.data['data'][0]['subjenis_pangan']}");
-
+      // Cek status code dari response
       if (response.statusCode == 200) {
         var data = response.data;
+
+        // Cek format data apakah sesuai
         if (data is Map<String, dynamic> && data.containsKey('data')) {
           List<dynamic> dataList = data['data'];
-          return dataList.map((item) => item as Map<String, dynamic>).toList();
+
+          // Parse setiap item dalam dataList menjadi LaporanPangan
+          return dataList.map((item) => LaporanPangan.fromJson(item)).toList();
         } else {
           throw Exception('Invalid data format');
         }
@@ -59,44 +63,45 @@ class RiwayatDataTerkirim extends StatelessWidget {
       ),
       body: FutureBuilder(
         future: getTambahDataPangan(),
-        builder: ((context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
-            return Center(child: Text('No Data Found'));
-          } else {
-            List<Map<String, dynamic>> data_pangan =
-                snapshot.data as List<Map<String, dynamic>>;
-            return SingleChildScrollView(
-              child: Container(
-                color: kPrimaryColor,
-                padding: const EdgeInsets.only(bottom: 100),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 10),
-                    for (var item in data_pangan)
-                      draftDataPanganTersimpan(
-                        status: true,
-                        isButtonVisible: false,
-                        jenis_pangan_id: item['jenis_pangan_id'].toString(),
-                        title1: 'Nama Pangan',
-                        valueText1: item['subjenis_pangan']['name'],
-                        title2: 'Persediaan',
-                        valueText2: item['stok'],
-                        title4: 'Harga',
-                        valueText4: item['harga'],
-                        id: item['id'].toString(),
-                        onDelete: () {},
-                      ),
-                  ],
-                ),
-              ),
-            );
-          }
-        }),
+        builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(child: Text('No Data Found'));
+              } else {
+                List<LaporanPangan> dataPangan = snapshot.data!;
+                return SingleChildScrollView(
+                  child: Container(
+                    color: kPrimaryColor,
+                    padding: const EdgeInsets.only(bottom: 100),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 10),
+                        for (var item in dataPangan)
+                          draftDataPanganTersimpan(
+                            laporanPangan: item,
+                            isButtonVisible: false,
+                            subjenisPangan: item.subjenisPangan,
+                            jenis_pangan_id: item.jenisPanganId,
+                            status: item.status == 0 ? false : true,
+                            title1: 'Nama Pangan',
+                            valueText1: item.subjenisPangan.name,
+                            title2: 'Persediaan',
+                            valueText2: item.stok.toString(),
+                            title4: 'Harga',
+                            valueText4: item.harga.toString(),
+                            id: item.id.toString(),
+                            onDelete: () {},
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+            },
       ),
     );
   }
