@@ -33,7 +33,7 @@ class DetailData extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Data Pangan Pasar Jatibarang',
+              'Data Pangan Pasar Bangkir',
               style: blackTextStyle.copyWith(
                 fontSize: 16,
                 fontWeight: semiBold,
@@ -103,12 +103,27 @@ class DetailData extends StatelessWidget {
                     'Beras'), // Tambahkan Spacer untuk mencentang ke sisi kanan
               ],
             ),
+            // SizedBox(height: 10),
+            // Row(
+            //   // Tambahkan Row untuk teks 'Jam' di sini
+            //   children: [
+            //     // Text(
+            //     //   'Sub Jenis Pangan',
+            //     //   style: semiblackTextStyle.copyWith(
+            //     //     fontSize: 14,
+            //     //     fontWeight: semiBold,
+            //     //   ),
+            //     // ),
+            //     // Spacer(),
+            //     // Text('20'), // Tambahkan Spacer untuk mencentang ke sisi kanan
+            //   ],
+            // ),
             SizedBox(height: 10),
             Row(
               // Tambahkan Row untuk teks 'Jam' di sini
               children: [
                 Text(
-                  'ketersediaan (Ton)',
+                  'persediaan',
                   style: semiblackTextStyle.copyWith(
                     fontSize: 14,
                     fontWeight: semiBold,
@@ -123,22 +138,7 @@ class DetailData extends StatelessWidget {
               // Tambahkan Row untuk teks 'Jam' di sini
               children: [
                 Text(
-                  'Kebutuhan (Ton)',
-                  style: semiblackTextStyle.copyWith(
-                    fontSize: 14,
-                    fontWeight: semiBold,
-                  ),
-                ),
-                Spacer(),
-                Text('20'), // Tambahkan Spacer untuk mencentang ke sisi kanan
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              // Tambahkan Row untuk teks 'Jam' di sini
-              children: [
-                Text(
-                  'Harga (Rp/Kg)',
+                  'Harga',
                   style: semiblackTextStyle.copyWith(
                     fontSize: 14,
                     fontWeight: semiBold,

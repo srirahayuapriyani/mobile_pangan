@@ -1,13 +1,9 @@
-import 'dart:convert';
-
 import 'package:apk/models/subjenis_pangan_model.dart';
 import 'package:apk/service/preferencesService.dart';
 import 'package:apk/ui/widgets/draft_data_tersimpan.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:apk/shared/theme.dart';
-import 'package:apk/ui/widgets/custom_text_form_field.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Perbaikan: Mengimport CustomTextFromField
 
 class DraftData extends StatefulWidget {
   const DraftData({Key? key}) : super(key: key);

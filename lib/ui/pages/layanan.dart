@@ -272,7 +272,7 @@ class Layanan extends StatelessWidget {
                       width: MediaQuery.of(context).size.width,
                       child: TextButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/riwayatdataterkirim');
+                          // Navigator.pushNamed(context, '/riwayatdataterkirim');
                         },
                         style: TextButton.styleFrom(
                           backgroundColor:
