@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:apk/models/subjenis_pangan_model.dart';
 import 'package:apk/service/preferencesService.dart';
 import 'package:apk/ui/widgets/draft_data_tersimpan.dart';
 import 'package:dio/dio.dart';
@@ -33,11 +34,11 @@ class _DraftDataState extends State<DraftData> {
       final dio = Dio();
       final userId = await PreferencesService().getId();
       final response = await dio.get(
-        'https://sintrenayu.com/api/pangan/showByUser/$userId',
+        'https://sintrenayu.com/api/pangan/showByUser/$userId?status=tersimpan',
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
-      print(response.data);
+      // print(" ini data ${response.data['data'][0]['subjenis_pangan']}");
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -103,9 +104,11 @@ class _DraftDataState extends State<DraftData> {
                     SizedBox(height: 10),
                     for (var item in data_pangan)
                       draftDataPanganTersimpan(
+                        subjenisPangan: SubjenisPangan.fromJson(item['subjenis_pangan']),
+                        jenis_pangan_id: item['jenis_pangan_id'].toString(),
                         status: false,
                         title1: 'Nama Pangan',
-                        valueText1: item['name'],
+                        valueText1: item['subjenis_pangan']['name'],
                         title2: 'Persediaan',
                         valueText2: item['stok'],
                         title4: 'Harga',

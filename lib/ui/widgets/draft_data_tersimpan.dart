@@ -1,3 +1,4 @@
+import 'package:apk/models/subjenis_pangan_model.dart';
 import 'package:apk/shared/theme.dart';
 import 'package:apk/ui/pages/detail_data.dart';
 import 'package:apk/ui/widgets/custom_button.dart';
@@ -7,6 +8,9 @@ import 'package:flutter/material.dart';
 // ignore: must_be_immutable
 class draftDataPanganTersimpan extends StatelessWidget {
   final String title1;
+
+  final SubjenisPangan? subjenisPangan;
+  final String? jenis_pangan_id; 
   final String id;
   bool? isButtonVisible;
   bool status;
@@ -32,7 +36,7 @@ class draftDataPanganTersimpan extends StatelessWidget {
     required this.status,
     this.isButtonVisible = true,
     required this.id,
-    this.onDelete,
+    this.onDelete,  this.jenis_pangan_id,  this.subjenisPangan,
   });
 
   Future<Response> deleteDataPangan(String id) async {
@@ -236,7 +240,7 @@ class draftDataPanganTersimpan extends StatelessWidget {
                             ),
                             onPressed: () {
                               Navigator.pushNamed(context,
-                                  '/editdata', arguments: {'nama':valueText1,'persediaan':valueText2,'harga':valueText4, 'id':id}); // Aksi yang ingin dilakukan ketika tombol ditekan
+                                  '/editdata', arguments: {'nama':valueText1,'persediaan':valueText2,'harga':valueText4, 'id':id, 'jenis_pangan_id': jenis_pangan_id, 'subjenis_pangan': subjenisPangan, 'subjenis_pangan_id': subjenisPangan!.id}); // Aksi yang ingin dilakukan ketika tombol ditekan
                             },
                             backgroundColor: kBlueColor2,
                             borderRadius: 5,

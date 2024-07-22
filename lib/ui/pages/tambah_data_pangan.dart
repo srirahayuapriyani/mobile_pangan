@@ -228,11 +228,13 @@
 
 import 'dart:convert';
 
+import 'package:apk/models/subjenis_pangan_model.dart';
 import 'package:apk/service/preferencesService.dart';
 import 'package:apk/shared/theme.dart';
 import 'package:apk/ui/widgets/custom_button.dart';
 import 'package:apk/ui/widgets/custom_text_form_field.dart';
 import 'package:dio/dio.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -245,7 +247,8 @@ class TambahDataPangan extends StatefulWidget {
 }
 
 class _TambahDataPanganState extends State<TambahDataPangan> {
-  TextEditingController namapanganC = TextEditingController();
+  // TextEditingController namapanganC = TextEditingController();
+  var subjenisPanganID; 
   TextEditingController persediaanC = TextEditingController();
   // TextEditingController kebutuhanC = TextEditingController();
   TextEditingController hargaC = TextEditingController();
@@ -257,7 +260,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
       'user_id': PreferencesService().getId(),
       'pasar_id': PreferencesService().getPasarId(),
       'jenis_pangan_id': jId.toString(),
-      'name': namapanganC.text,
+      'subjenis_pangan_id': subjenisPanganID.toString(),
       'stok': persediaanC.text,
       'harga': hargaC.text,
       'date': getCurrentDateFormatted(),
@@ -272,16 +275,26 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
         data: data,
         options: Options(headers: {'Accept': 'application/json'}),
       );
-      print('this is response ${response.data}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Data berhasil disimpan');
-        Navigator.pushNamed(context, '/draftdata');
+        if (status == 0) {
+          Navigator.pushNamed(context, '/draftdata');
+        } else {
+          Navigator.pushNamed(context, '/riwayatdatakirim');
+        }
         // Lakukan sesuatu jika data berhasil disimpan
       } else {
         print('Gagal menyimpan data');
       }
-    } catch (e) {
-      print('Error: $e');
+    } on DioException catch (e) {
+      if (e.response != null) {
+        print(e.response!.data);
+        print(e.response!.headers);
+        print(e.response!.requestOptions);
+      } else {
+        print(e.requestOptions);
+        print(e.message);
+      }
     }
   }
 
@@ -301,6 +314,9 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)
+                          ?.settings
+                          .arguments as Map<String, dynamic>?;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(title: Text("Tambah Data Pangan")),
@@ -310,17 +326,65 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
           child: Padding(
             padding: const EdgeInsets.all(15),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomTextFromField(
-                  controller: namapanganC,
-                  title: 'Nama Pangan',
-                  hintText: 'Masukan nama pangan',
-                  validator: (value) {
-                    return value!.isEmpty
-                        ? "Nama pangan tidak boleh kosong"
-                        : null;
-                  },
+                Text(
+                  'Subjenis Pangan',
+                  style: blackTextStyle.copyWith(
+                    fontSize: 16,
+                    fontWeight: medium,
+                    
+                  ),
                 ),
+                const SizedBox(height: 5,),
+
+                DropdownSearch<SubjenisPangan>(
+                  itemAsString: (SubjenisPangan? item) => item?.name ?? '',
+                  dropdownDecoratorProps: DropDownDecoratorProps(dropdownSearchDecoration: InputDecoration(
+                  hintText: "Masukan nama pangan",
+                  hintStyle: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
+
+                  fillColor:Colors.white, // Ubah warna fill (isi) dari kotak form di sini
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    borderSide: BorderSide(
+                      color: kGreyColor,
+                    ),
+                  ),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                  
+                ),),
+                      asyncItems: (String filter) async {
+                          var response = await Dio().get(
+                              "https://sintrenayu.com/api/pangan/subjenis_pangan/${arguments!['jenis_pangan_id']}",
+                              // queryParameters: {"filter": filter},
+                          );
+                          var models = SubjenisPangan.fromJsonList(response.data['subjenis_pangan']);
+                          return models;
+                      },
+                      onChanged: (SubjenisPangan? data) {
+                        subjenisPanganID =  data!.id;
+                      },
+                  ),
+                SizedBox(height: 20,),
+                // CustomTextFromField(
+                //   controller: namapanganC,
+                //   title: 'Nama Pangan',
+                //   hintText: 'Masukan nama pangan',
+                //   validator: (value) {
+                //     return value!.isEmpty
+                //         ? "Nama pangan tidak boleh kosong"
+                //         : null;
+                //   },
+                // ),
                 CustomTextFromField(
                   controller: persediaanC,
                   title: 'persediaan',
@@ -355,9 +419,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                     if (formKey.currentState!.validate()) {
                       // Navigator.pushNamed(context, '/draftdata');
                       // // print(arguments['jenis_pangan_id']);
-                      final arguments = ModalRoute.of(context)
-                          ?.settings
-                          .arguments as Map<String, dynamic>?;
+                      
 
                       store(arguments!['jenis_pangan_id'], 0);
                     }
@@ -377,7 +439,13 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   ),
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      Navigator.pushNamed(context, '/kirimdataberhasil');
+                      // Navigator.pushNamed(context, '/draftdata');
+                      // // print(arguments['jenis_pangan_id']);
+                      final arguments = ModalRoute.of(context)
+                          ?.settings
+                          .arguments as Map<String, dynamic>?;
+
+                      store(arguments!['jenis_pangan_id'], 1);
                     }
                   },
                 ),

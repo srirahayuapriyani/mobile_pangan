@@ -7,19 +7,6 @@ class Layanan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget header() {
-      return AppBar(
-        centerTitle: true,
-        title: Text(
-          'Layanan',
-          style: blackTextStyle.copyWith(
-            fontSize: 18,
-            fontWeight: semiBold,
-          ),
-        ),
-      );
-    }
-
     Widget daftarPangan(BuildContext context) {
       return Container(
         margin: const EdgeInsets.only(top: 20),
@@ -120,7 +107,7 @@ class Layanan extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Draft Data Pangan Tersimpan",
+                      "Draft Data",
                       style: whiteTextStyle.copyWith(
                         fontSize: 18,
                         fontWeight: semiBold,
@@ -193,7 +180,7 @@ class Layanan extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Riwayat Data Pangan Terkirim",
+                      "Riwayat Data",
                       style: whiteTextStyle.copyWith(
                         fontSize: 18,
                         fontWeight: semiBold,
@@ -239,14 +226,174 @@ class Layanan extends StatelessWidget {
       );
     }
 
+  Widget grafikData(BuildContext context) {
+      return Container(
+        margin: const EdgeInsets.only(top: 20),
+        child: Row(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(
+                  horizontal: 10), // Menambahkan jarak horizontal
+              width: MediaQuery.of(context).size.width - 20,
+              height: 142,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                image: const DecorationImage(
+                  image: AssetImage(
+                    'assets/bg3.png',
+                  ),
+                  fit: BoxFit
+                      .cover, // tambahkan jika Anda ingin gambar diisi ke dalam container
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(
+                    15), // Menambahkan jarak atas, bawah, kiri, dan kanan dalam gambar
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Grafik Data",
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 18,
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                    Text(
+                      "Riwayat data pangan yang bisa dilihat",
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: reguler,
+                      ),
+                    ),
+                    const SizedBox(
+                        height: 10), // Tambahkan jarak antara teks dan tombol
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/riwayatdataterkirim');
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              kWhiteColor, // Warna latar belakang tombol
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        child: Text(
+                          'Lihat',
+                          style: blueTextStyle.copyWith(
+                            fontSize: 14,
+                            fontWeight: semiBold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    Widget grafik(BuildContext context) {
+      return Container(
+        margin: const EdgeInsets.only(top: 20),
+        child: Row(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(
+                  horizontal: 10), // Menambahkan jarak horizontal
+              width: MediaQuery.of(context).size.width - 20,
+              height: 142,
+              // decoration: BoxDecoration(
+              //   borderRadius: BorderRadius.circular(5),
+              //   image: const DecorationImage(
+              //     image: AssetImage(
+              //       'assets/bg3.png',
+              //     ),
+              //     fit: BoxFit
+              //         .cover, // tambahkan jika Anda ingin gambar diisi ke dalam container
+              //   ),
+              // ),
+              child: Padding(
+                padding: const EdgeInsets.all(
+                    15), // Menambahkan jarak atas, bawah, kiri, dan kanan dalam gambar
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Grafik Data",
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 18,
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                    Text(
+                      "Riwayat data pangan yang bisa dilihat",
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: reguler,
+                      ),
+                    ),
+                    const SizedBox(
+                        height: 10), // Tambahkan jarak antara teks dan tombol
+                    // Container(
+                    //   width: MediaQuery.of(context).size.width,
+                    //   child: TextButton(
+                    //     onPressed: () {
+                    //       Navigator.pushNamed(context, '/riwayatdataterkirim');
+                    //     },
+                    //     style: TextButton.styleFrom(
+                    //       backgroundColor:
+                    //           kWhiteColor, // Warna latar belakang tombol
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(5),
+                    //       ),
+                    //     ),
+                    //     child: Text(
+                    //       'Lihat',
+                    //       style: blueTextStyle.copyWith(
+                    //         fontSize: 14,
+                    //         fontWeight: semiBold,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    
   
-    return ListView(
-      children: [
-        header(),
-        daftarPangan(context),
-        draftDataPanganTersimpan(context),
-          draftDataPanganTerkirim(context),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          'Layanan',
+          style: blackTextStyle.copyWith(
+            fontSize: 18,
+            fontWeight: semiBold,
+          ),
+        ),
+      ),
+      body: ListView(
+        children: [
+        
+          daftarPangan(context),
+          draftDataPanganTersimpan(context),
+            draftDataPanganTerkirim(context),
+            grafikData(context),
+              grafik(context),
+        ],
+      ),
     );
   }
 }

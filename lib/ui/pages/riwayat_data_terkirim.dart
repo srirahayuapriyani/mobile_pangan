@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:apk/service/preferencesService.dart';
 import 'package:apk/ui/pages/draft_data.dart';
 import 'package:apk/ui/widgets/draft_data_tersimpan.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:apk/shared/theme.dart';
 import 'package:apk/ui/widgets/custom_text_form_field.dart';
@@ -23,12 +25,31 @@ class RiwayatDataTerkirim extends StatelessWidget {
   //   );
   // }
   Future<List<Map<String, dynamic>>> getTambahDataPangan() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> dataList = prefs.getStringList('data_pangan') ?? [];
-    List<Map<String, dynamic>> data = dataList
-        .map((item) => jsonDecode(item) as Map<String, dynamic>)
-        .toList();
-    return data;
+    try {
+      final dio = Dio();
+      final userId = await PreferencesService().getId();
+      final response = await dio.get(
+        'https://sintrenayu.com/api/pangan/showByUser/$userId?status=terkirim',
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+
+      // print(" ini data ${response.data['data'][0]['subjenis_pangan']}");
+
+      if (response.statusCode == 200) {
+        var data = response.data;
+        if (data is Map<String, dynamic> && data.containsKey('data')) {
+          List<dynamic> dataList = data['data'];
+          return dataList.map((item) => item as Map<String, dynamic>).toList();
+        } else {
+          throw Exception('Invalid data format');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+      return [];
+    }
   }
 
   @override
@@ -65,13 +86,14 @@ class RiwayatDataTerkirim extends StatelessWidget {
                       draftDataPanganTersimpan(
                         status: true,
                         isButtonVisible: false,
+                        jenis_pangan_id: item['jenis_pangan_id'].toString(),
                         title1: 'Nama Pangan',
-                        valueText1: item['Nama Pangan'],
+                        valueText1: item['subjenis_pangan']['name'],
                         title2: 'Persediaan',
-                        valueText2: item['Persediaan'],
+                        valueText2: item['stok'],
                         title4: 'Harga',
-                        valueText4: item['Harga'],
-                        id: '1',
+                        valueText4: item['harga'],
+                        id: item['id'].toString(),
                         onDelete: () {},
                       ),
                   ],

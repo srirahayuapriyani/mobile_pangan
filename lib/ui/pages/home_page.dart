@@ -17,9 +17,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<JenisPangan>? jenisPanganItem; 
+  List<JenisPangan>? jenisPanganItem;
   bool isLoading = false;
-  
 
   @override
   void initState() {
@@ -27,13 +26,14 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  void fetchJenisPangan() async{
+  void fetchJenisPangan() async {
     isLoading = true;
-    jenisPanganItem =  await JenisPanganService().fetchJenisPangan();
+    jenisPanganItem = await JenisPanganService().fetchJenisPangan();
     setState(() {
       isLoading = false;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     Widget header() {
@@ -44,8 +44,8 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             InkWell(
-              onTap: (){
-            Navigator.pushNamed(context, '/profile');
+              onTap: () {
+                Navigator.pushNamed(context, '/profile');
               },
               child: Container(
                 width: 40,
@@ -194,17 +194,24 @@ class _HomePageState extends State<HomePage> {
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child:isLoading? Center(child: CircularProgressIndicator(),) :Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: jenisPanganItem?.map((jenis) {
-              return GestureDetector(
-                onTap: () {
-                },
-                child: _buildJenisPanganItem('', "assets/${jenis.name}.png", context),
-              );
-            }).toList() ?? [],
-          ),
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: jenisPanganItem?.map((jenis) {
+                            return GestureDetector(
+                              onTap: () {},
+                              child: _buildJenisPanganItem(
+                                  '',
+                                  "https://sintrenayu.com/storage/${jenis.gambar}",
+                                  context),
+                            );
+                          }).toList() ??
+                          [],
+                    ),
             ),
           ],
         ),
@@ -264,24 +271,31 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-Widget _buildJenisPanganItem(String title, String imagePath,BuildContext context) {
+Widget _buildJenisPanganItem(
+    String title, String imagePath, BuildContext context) {
   return Container(
     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
     child: Column(
       children: [
-        Image.asset(
-          imagePath,
-          // width: MediaQuery.of(context).size.width * 0.25,
-          width: 100,
-          height: 100,
-          fit: BoxFit.cover,
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.network(
+              imagePath,
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
-        const SizedBox(height: 8),
-        // Text(
-        //   title,
-        //   style: const TextStyle(fontSize: 14),
-        // ),
+        const SizedBox(height: 5),
+        
       ],
     ),
   );
 }
+
+
