@@ -35,7 +35,7 @@ class _DraftDataState extends State<DraftData> {
       );
 
       // Cek status code dari response
-      if (response.statusCode == 200) {
+       if (response.statusCode == 200) {
         var data = response.data;
 
         // Cek format data apakah sesuai

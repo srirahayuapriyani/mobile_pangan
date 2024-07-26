@@ -280,7 +280,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
         if (status == 0) {
           Navigator.pushNamed(context, '/draftdata');
         } else {
-          Navigator.pushNamed(context, '/riwayatdatakirim');
+          Navigator.pushNamed(context, '/riwayatdataterkirim');
         }
         // Lakukan sesuatu jika data berhasil disimpan
       } else {

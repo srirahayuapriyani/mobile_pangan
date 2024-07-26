@@ -110,22 +110,22 @@ class draftDataPanganTersimpan extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomButton(
-                  width: 191,
-                  height: 35, // Panggil CustomButton di sini
-                  title: 'Sab, 20\April 2024',
-                  textStyle: blueTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: medium,
-                  ),
-                  iconAssetPath: 'assets/CalendarBlank.svg',
-                  onPressed: () {
-                    // Aksi yang ingin dilakukan ketika tombol ditekan
-                  },
-                  backgroundColor:
-                      kGreenColor, // Atur warna latar belakang sesuai keinginan
-                  borderRadius: 30, // Atur nilai border radius sesuai keinginan
-                ),
+                // CustomButton(
+                //   width: 191,
+                //   height: 35, // Panggil CustomButton di sini
+                //   title: 'Sab, 20\April 2024',
+                //   textStyle: blueTextStyle.copyWith(
+                //     fontSize: 16,
+                //     fontWeight: medium,
+                //   ),
+                //   iconAssetPath: 'assets/CalendarBlank.svg',
+                //   onPressed: () {
+                //     // Aksi yang ingin dilakukan ketika tombol ditekan
+                //   },
+                //   backgroundColor:
+                //       kGreenColor, // Atur warna latar belakang sesuai keinginan
+                //   borderRadius: 30, // Atur nilai border radius sesuai keinginan
+                // ),
                 SizedBox(height: 10),
                 Row(
                   children: [
