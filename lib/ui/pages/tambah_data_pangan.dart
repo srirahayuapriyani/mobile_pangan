@@ -248,7 +248,7 @@ class TambahDataPangan extends StatefulWidget {
 
 class _TambahDataPanganState extends State<TambahDataPangan> {
   // TextEditingController namapanganC = TextEditingController();
-  var subjenisPanganID; 
+  var subjenisPanganID;
   TextEditingController persediaanC = TextEditingController();
   // TextEditingController kebutuhanC = TextEditingController();
   TextEditingController hargaC = TextEditingController();
@@ -314,9 +314,8 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
 
   @override
   Widget build(BuildContext context) {
-    final arguments = ModalRoute.of(context)
-                          ?.settings
-                          .arguments as Map<String, dynamic>?;
+    final arguments =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(title: Text("Tambah Data Pangan")),
@@ -333,48 +332,54 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   style: blackTextStyle.copyWith(
                     fontSize: 16,
                     fontWeight: medium,
-                    
                   ),
                 ),
-                const SizedBox(height: 5,),
+                const SizedBox(
+                  height: 5,
+                ),
 
                 DropdownSearch<SubjenisPangan>(
                   itemAsString: (SubjenisPangan? item) => item?.name ?? '',
-                  dropdownDecoratorProps: DropDownDecoratorProps(dropdownSearchDecoration: InputDecoration(
-                  hintText: "Masukan nama pangan",
-                  hintStyle: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal,
-                  ),
+                  dropdownDecoratorProps: DropDownDecoratorProps(
+                    dropdownSearchDecoration: InputDecoration(
+                      hintText: "Masukan nama pangan",
+                      hintStyle: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                      ),
 
-                  fillColor:Colors.white, // Ubah warna fill (isi) dari kotak form di sini
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(
-                      color: kGreyColor,
+                      fillColor: Colors
+                          .white, // Ubah warna fill (isi) dari kotak form di sini
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                          color: kGreyColor,
+                        ),
+                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                     ),
                   ),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                  
-                ),),
-                      asyncItems: (String filter) async {
-                          var response = await Dio().get(
-                              "https://sintrenayu.com/api/pangan/subjenis_pangan/${arguments!['jenis_pangan_id']}",
-                              // queryParameters: {"filter": filter},
-                          );
-                          var models = SubjenisPangan.fromJsonList(response.data['subjenis_pangan']);
-                          return models;
-                      },
-                      onChanged: (SubjenisPangan? data) {
-                        subjenisPanganID =  data!.id;
-                      },
-                  ),
-                SizedBox(height: 20,),
+                  asyncItems: (String filter) async {
+                    var response = await Dio().get(
+                      "https://sintrenayu.com/api/pangan/subjenis_pangan/${arguments!['jenis_pangan_id']}",
+                      // queryParameters: {"filter": filter},
+                    );
+                    var models = SubjenisPangan.fromJsonList(
+                        response.data['subjenis_pangan']);
+                    return models;
+                  },
+                  onChanged: (SubjenisPangan? data) {
+                    subjenisPanganID = data!.id;
+                  },
+                ),
+                SizedBox(
+                  height: 20,
+                ),
                 // CustomTextFromField(
                 //   controller: namapanganC,
                 //   title: 'Nama Pangan',
@@ -419,7 +424,6 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                     if (formKey.currentState!.validate()) {
                       // Navigator.pushNamed(context, '/draftdata');
                       // // print(arguments['jenis_pangan_id']);
-                      
 
                       store(arguments!['jenis_pangan_id'], 0);
                     }
@@ -444,7 +448,6 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                       final arguments = ModalRoute.of(context)
                           ?.settings
                           .arguments as Map<String, dynamic>?;
-
                       store(arguments!['jenis_pangan_id'], 1);
                     }
                   },
