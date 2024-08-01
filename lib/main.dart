@@ -2,6 +2,7 @@ import 'package:apk/cubit/page_cubit.dart';
 import 'package:apk/service/preferencesService.dart';
 import 'package:apk/ui/pages/daftar_pangan.dart';
 import 'package:apk/ui/pages/detail_data.dart';
+import 'package:apk/ui/pages/grafik_data.dart';
 import 'package:apk/ui/pages/riwayat_data_terkirim.dart';
 import 'package:apk/ui/pages/edit_data.dart';
 import 'package:apk/ui/pages/kirim_data_berhasil.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
           '/layanan': (context) => Layanan(),
           '/profile': (context) => Profile(),
           '/riwayatdataterkirim': (context) => RiwayatDataTerkirim(),
+          '/grafikdata':(context) => GrafikData(),
         },
         onGenerateRoute: (settings) {
           if (settings.name == '/main') {

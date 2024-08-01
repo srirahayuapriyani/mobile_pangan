@@ -16,6 +16,7 @@ class EditData extends StatefulWidget {
 }
 
 class _EditDataState extends State<EditData> {
+  final _formKey = GlobalKey<FormState>(); // Tambahkan key untuk form
   var subjenisPanganID;
   TextEditingController persediaanController = TextEditingController();
   TextEditingController hargaController = TextEditingController();
@@ -27,7 +28,7 @@ class _EditDataState extends State<EditData> {
     _initializeData();
   }
 
-  Future<void> update(String id, int status) async {
+  Future<bool> update(String id, int status) async {
     var data = {
       'subjenis_pangan_id': subjenisPanganID.toString(),
       'stok': persediaanController.text,
@@ -35,7 +36,7 @@ class _EditDataState extends State<EditData> {
       'status': status,
       '_method': 'put',
     };
-    print("ini data $data");
+    print("Data yang akan dikirim: $data");
 
     try {
       Response response = await _dio.post(
@@ -49,21 +50,20 @@ class _EditDataState extends State<EditData> {
         } else {
           Navigator.pushNamed(context, '/riwayatdataterkirim');
         }
+        return true;
       } else {
-        print('Gagal menyimpan data');
+        return false;
       }
     } on DioException catch (e) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx and is also not 304.
       if (e.response != null) {
         print(e.response!.data);
         print(e.response!.headers);
         print(e.response!.requestOptions);
       } else {
-        // Something happened in setting up or sending the request that triggered an Error
         print(e.requestOptions);
         print(e.message);
       }
+      return false;
     }
   }
 
@@ -86,82 +86,112 @@ class _EditDataState extends State<EditData> {
     Widget namapasar() {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 10),
-            DropdownSearch<SubjenisPangan>(
-              selectedItem: arguments!['subjenis_pangan'],
-              itemAsString: (SubjenisPangan? item) => item?.name ?? '',
-              dropdownDecoratorProps: DropDownDecoratorProps(
-                dropdownSearchDecoration: InputDecoration(
-                  hintText: "Masukan nama pangan",
-                  hintStyle: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.normal),
-                  fillColor: Colors.white,
-                  filled: true,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(color: kGreyColor),
+        child: Form(
+          key: _formKey, // Tambahkan key untuk form
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 10),
+              DropdownSearch<SubjenisPangan>(
+                selectedItem: arguments!['subjenis_pangan'],
+                itemAsString: (SubjenisPangan? item) => item?.name ?? '',
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                  dropdownSearchDecoration: InputDecoration(
+                    hintText: "Masukan nama pangan",
+                    hintStyle: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                    ),
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(color: kGreyColor),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                   ),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                 ),
+                popupProps: const PopupProps.bottomSheet(
+                  showSelectedItems: true,
+                ),
+                compareFn: (item1, item2) => item1.id == item2.id,
+                asyncItems: (String filter) async {
+                  var response = await Dio().get(
+                    "https://sintrenayu.com/api/pangan/subjenis_pangan/${arguments['jenis_pangan_id']}",
+                  );
+                  var models = SubjenisPangan.fromJsonList(
+                      response.data['subjenis_pangan']);
+                  return models;
+                },
+                onChanged: (SubjenisPangan? data) {
+                  subjenisPanganID = data?.id;
+                },
               ),
-              popupProps: const PopupProps.bottomSheet(
-                showSelectedItems: true
+              SizedBox(height: 10),
+              CustomTextFromField(
+                controller: persediaanController,
+                title: 'Persediaan',
+                hintText: 'Masukan Ketersediaan',
+                validator: (value) {
+                  return value!.isEmpty ? "Persediaan tidak boleh kosong" : null;
+                },
               ),
-              compareFn: (item1, item2) => item1.id == item2.id,
-              asyncItems: (String filter) async {
-                var response = await Dio().get(
-                  "https://sintrenayu.com/api/pangan/subjenis_pangan/${arguments['jenis_pangan_id']}",
-                );
-                var models = SubjenisPangan.fromJsonList(
-                    response.data['subjenis_pangan']);
-                return models;
-              },
-              onChanged: (SubjenisPangan? data) {
-                subjenisPanganID = data!.id;
-              },
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            CustomTextFromField(
-              controller: persediaanController,
-              title: 'Persediaan',
-              hintText: 'Masukan Ketersediaan',
-            ),
-            CustomTextFromField(
-              controller: hargaController,
-              title: 'Harga',
-              hintText: 'Masukan harga',
-            ),
-            CustomButton(
-              title: 'Simpan data',
-              width: MediaQuery.of(context).size.width,
-              textStyle:
-                  whiteTextStyle.copyWith(fontSize: 16, fontWeight: semiBold),
-              onPressed: () {
-                update(id, 0);
-                // Navigator.pushNamed(context, '/draftdata');
-              },
-            ),
-            SizedBox(height: 10),
-            CustomButton(
-              title: 'Kirim data',
-              width: MediaQuery.of(context).size.width,
-              backgroundColor: kOrangeColor,
-              textStyle:
-                  whiteTextStyle.copyWith(fontSize: 16, fontWeight: semiBold),
-              onPressed: () {
-                update(id, 1);
-                // Navigator.pushNamed(context, '/riwayatdataterkirim');
-              },
-            ),
-          ],
+              CustomTextFromField(
+                controller: hargaController,
+                title: 'Harga',
+                hintText: 'Masukan harga',
+                validator: (value) {
+                  return value!.isEmpty ? "Harga tidak boleh kosong" : null;
+                },
+              ),
+              SizedBox(height: 10),
+              CustomButton(
+                title: 'Simpan Data',
+                width: MediaQuery.of(context).size.width,
+                textStyle: whiteTextStyle.copyWith(fontSize: 16, fontWeight: semiBold),
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) { // Periksa validasi form
+                    update(id!, 0).then((success) {
+                      if (success) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Data berhasil diperbarui')),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Gagal menyimpan data terbaru')),
+                        );
+                      }
+                    });
+                  }
+                },
+              ),
+              SizedBox(height: 10),
+              CustomButton(
+                title: 'Kirim Data',
+                width: MediaQuery.of(context).size.width,
+                backgroundColor: kOrangeColor,
+                textStyle: whiteTextStyle.copyWith(fontSize: 16, fontWeight: semiBold),
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) { // Periksa validasi form
+                    update(id!, 1).then((success) {
+                      if (success) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Data terbaru berhasil terkirim')),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Gagal mengirim data terbaru')),
+                        );
+                      }
+                    });
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       );
     }

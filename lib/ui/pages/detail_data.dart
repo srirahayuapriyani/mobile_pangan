@@ -1,3 +1,4 @@
+import 'package:apk/models/laporan_pangan.dart';
 import 'package:apk/shared/theme.dart';
 import 'package:apk/ui/widgets/custom_button.dart';
 import 'package:apk/ui/widgets/custom_text_form_field.dart';
@@ -9,6 +10,9 @@ class DetailData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)
+                          ?.settings
+                          .arguments as Map<String, dynamic>?;
     Widget backgroundImage() {
       return Container(
         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -26,14 +30,14 @@ class DetailData extends StatelessWidget {
       );
     }
 
-    Widget namapasar() {
+    Widget namapasar(LaporanPangan laporanPangan) {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Data Pangan Pasar Jatibarang',
+              'Data Pangan Pasar Bangkir',
               style: blackTextStyle.copyWith(
                 fontSize: 16,
                 fontWeight: semiBold,
@@ -52,26 +56,25 @@ class DetailData extends StatelessWidget {
                 ),
                 Spacer(),
                 Text(
-                  'Sabtu, 21 April 2024',
+                  laporanPangan.date,
                 ),
               ],
             ),
-            SizedBox(height: 10),
-            Row(
-              // Tambahkan Row untuk teks 'Jam' di sini
-              children: [
-                Text(
-                  'Jam',
-                  style: semiblackTextStyle.copyWith(
-                    fontSize: 14,
-                    fontWeight: semiBold,
-                  ),
-                ),
-                Spacer(),
-                Text(
-                    '15:00 Wib'), // Tambahkan Spacer untuk mencentang ke sisi kanan
-              ],
-            ),
+            // SizedBox(height: 10),
+            // Row(
+            //   // Tambahkan Row untuk teks 'Jam' di sini
+            //   children: [
+            //     Text(
+            //       'Jam',
+            //       style: semiblackTextStyle.copyWith(
+            //         fontSize: 14,
+            //         fontWeight: semiBold,
+            //       ),
+            //     ),
+            //     Spacer(),
+            //     Text(laporanPangan.), // Tambahkan Spacer untuk mencentang ke sisi kanan
+            //   ],
+            // ),
             SizedBox(height: 10),
             Row(
               // Tambahkan Row untuk teks 'Jam' di sini
@@ -84,7 +87,7 @@ class DetailData extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
-                Text('Ayu'), // Tambahkan Spacer untuk mencentang ke sisi kanan
+                Text(laporanPangan.user.name), // Tambahkan Spacer untuk mencentang ke sisi kanan
               ],
             ),
             SizedBox(height: 10),
@@ -100,7 +103,37 @@ class DetailData extends StatelessWidget {
                 ),
                 Spacer(),
                 Text(
-                    'Beras'), // Tambahkan Spacer untuk mencentang ke sisi kanan
+                    laporanPangan.subjenisPangan.name), // Tambahkan Spacer untuk mencentang ke sisi kanan
+              ],
+            ),
+            // SizedBox(height: 10),
+            // Row(
+            //   // Tambahkan Row untuk teks 'Jam' di sini
+            //   children: [
+            //     // Text(
+            //     //   'Sub Jenis Pangan',
+            //     //   style: semiblackTextStyle.copyWith(
+            //     //     fontSize: 14,
+            //     //     fontWeight: semiBold,
+            //     //   ),
+            //     // ),
+            //     // Spacer(),
+            //     // Text('20'), // Tambahkan Spacer untuk mencentang ke sisi kanan
+            //   ],
+            // ),
+            SizedBox(height: 10),
+            Row(
+              // Tambahkan Row untuk teks 'Jam' di sini
+              children: [
+                Text(
+                  'persediaan',
+                  style: semiblackTextStyle.copyWith(
+                    fontSize: 14,
+                    fontWeight: semiBold,
+                  ),
+                ),
+                Spacer(),
+                Text(laporanPangan.stok.toString()), // Tambahkan Spacer untuk mencentang ke sisi kanan
               ],
             ),
             SizedBox(height: 10),
@@ -108,45 +141,14 @@ class DetailData extends StatelessWidget {
               // Tambahkan Row untuk teks 'Jam' di sini
               children: [
                 Text(
-                  'ketersediaan (Ton)',
+                  'Harga',
                   style: semiblackTextStyle.copyWith(
                     fontSize: 14,
                     fontWeight: semiBold,
                   ),
                 ),
                 Spacer(),
-                Text('20'), // Tambahkan Spacer untuk mencentang ke sisi kanan
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              // Tambahkan Row untuk teks 'Jam' di sini
-              children: [
-                Text(
-                  'Kebutuhan (Ton)',
-                  style: semiblackTextStyle.copyWith(
-                    fontSize: 14,
-                    fontWeight: semiBold,
-                  ),
-                ),
-                Spacer(),
-                Text('20'), // Tambahkan Spacer untuk mencentang ke sisi kanan
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              // Tambahkan Row untuk teks 'Jam' di sini
-              children: [
-                Text(
-                  'Harga (Rp/Kg)',
-                  style: semiblackTextStyle.copyWith(
-                    fontSize: 14,
-                    fontWeight: semiBold,
-                  ),
-                ),
-                Spacer(),
-                Text(
-                    '10000'), // Tambahkan Spacer untuk mencentang ke sisi kanan
+                Text(laporanPangan.harga.toString()), // Tambahkan Spacer untuk mencentang ke sisi kanan
               ],
             ),
           ],
@@ -170,7 +172,7 @@ class DetailData extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             backgroundImage(),
-            namapasar(),
+            namapasar(arguments!['laporan_pangan']),
           ],
         ),
       ),

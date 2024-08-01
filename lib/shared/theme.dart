@@ -15,6 +15,7 @@ Color kRedColor = Color(0xffEF6262);
 Color kBlueColor2 = Color(0xffD0E7F3);
 Color kGreenColor =Color(0xffD6EFD8);
 Color kTransparentColor = Colors.transparent;
+Color kBlueSoftColor = Color(0xff96C9F4);
 
 
 

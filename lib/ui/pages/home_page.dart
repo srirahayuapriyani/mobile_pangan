@@ -1,9 +1,13 @@
 import "package:apk/models/jenis_pangan_model.dart";
+import "package:apk/models/laporan_pangan.dart";
 import "package:apk/service/jenis_pangan_service.dart";
+import "package:apk/service/preferencesService.dart";
 import "package:apk/shared/theme.dart";
 import "package:apk/ui/pages/daftar_pangan.dart";
 import "package:apk/ui/widgets/custom_text_form_field.dart";
+import "package:apk/ui/widgets/draft_data_tersimpan.dart";
 import "package:apk/ui/widgets/riwayat_data_terkirim.dart.dart";
+import "package:dio/dio.dart";
 
 import "package:flutter/material.dart";
 
@@ -18,11 +22,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<JenisPangan>? jenisPanganItem;
+  List<LaporanPangan>? riwayat;
   bool isLoading = false;
 
   @override
   void initState() {
     fetchJenisPangan();
+    fetchRiwayatPangan();
     super.initState();
   }
 
@@ -33,6 +39,46 @@ class _HomePageState extends State<HomePage> {
       isLoading = false;
     });
   }
+
+  void fetchRiwayatPangan() async {
+    isLoading = true;
+    riwayat= await getRiwayat();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<List<LaporanPangan>> getRiwayat() async {
+    try {
+      final dio = Dio();
+      final userId = await PreferencesService().getId();
+      final response = await dio.get(
+        'https://sintrenayu.com/api/pangan/showByUser/$userId?status=terkirim',
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+
+      // Cek status code dari response
+      if (response.statusCode == 200) {
+        var data = response.data;
+
+        // Cek format data apakah sesuai
+        if (data is Map<String, dynamic> && data.containsKey('data')) {
+          List<dynamic> dataList = data['data'];
+
+          // Parse setiap item dalam dataList menjadi LaporanPangan
+          return dataList.map((item) => LaporanPangan.fromJson(item)).toList();
+        } else {
+          throw Exception('Invalid data format');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+      return [];
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -238,22 +284,40 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
-            const RiwayatDataTerkirim(
-              alamat:
-                  'Bulak, Kec. Jatibarang, Kabupaten\nIndramayu,Jawa Barat 45273',
-            ),
-            const RiwayatDataTerkirim(
-              alamat:
-                  'Bulak, Kec. Jatibarang, Kabupaten\nIndramayu,Jawa Barat 45273',
-            ),
-            const RiwayatDataTerkirim(
-              alamat:
-                  'Bulak, Kec. Jatibarang, Kabupaten\nIndramayu,Jawa Barat 45273',
-            ),
-            const RiwayatDataTerkirim(
-              alamat:
-                  'Bulak, Kec. Jatibarang, Kabupaten\nIndramayu,Jawa Barat 45273',
-            ), // Tambahkan widget lain untuk riwayat pasar di sini
+            Column(children: riwayat?.map((item) {
+                            return draftDataPanganTersimpan(
+                            laporanPangan: item,
+                            isButtonVisible: false,
+                            subjenisPangan: item.subjenisPangan,
+                            jenis_pangan_id: item.jenisPanganId,
+                            status: item.status == 0 ? false : true,
+                            title1: 'Nama Pangan',
+                            valueText1: item.subjenisPangan.name,
+                            title2: 'Persediaan',
+                            valueText2: item.stok.toString(),
+                            title4: 'Harga',
+                            valueText4: item.harga.toString(),
+                            id: item.id.toString(),
+                            onDelete: () {},
+                          );
+                          }).toList() ??
+                          [],),
+            // const RiwayatDataTerkirim(
+            //   alamat:
+            //       'Bulak, Kec. Jatibarang, Kabupaten\nIndramayu,Jawa Barat 45273',
+            // ),
+            // const RiwayatDataTerkirim(
+            //   alamat:
+            //       'Bulak, Kec. Jatibarang, Kabupaten\nIndramayu,Jawa Barat 45273',
+            // ),
+            // const RiwayatDataTerkirim(
+            //   alamat:
+            //       'Bulak, Kec. Jatibarang, Kabupaten\nIndramayu,Jawa Barat 45273',
+            // ),
+            // const RiwayatDataTerkirim(
+            //   alamat:
+            //       'Bulak, Kec. Jatibarang, Kabupaten\nIndramayu,Jawa Barat 45273',
+            // ), // Tambahkan widget lain untuk riwayat pasar di sini
           ],
         ),
       );
