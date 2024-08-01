@@ -247,15 +247,13 @@ class TambahDataPangan extends StatefulWidget {
 }
 
 class _TambahDataPanganState extends State<TambahDataPangan> {
-  // TextEditingController namapanganC = TextEditingController();
   var subjenisPanganID;
   TextEditingController persediaanC = TextEditingController();
-  // TextEditingController kebutuhanC = TextEditingController();
   TextEditingController hargaC = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final Dio _dio = Dio();
 
-  Future<void> store(int jId, int status) async {
+  Future<bool> store(int jId, int status) async {
     var data = {
       'user_id': PreferencesService().getId(),
       'pasar_id': PreferencesService().getPasarId(),
@@ -282,9 +280,10 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
         } else {
           Navigator.pushNamed(context, '/riwayatdataterkirim');
         }
-        // Lakukan sesuatu jika data berhasil disimpan
+        return true; // Operasi berhasil
       } else {
         print('Gagal menyimpan data');
+        return false; // Operasi gagal
       }
     } on DioException catch (e) {
       if (e.response != null) {
@@ -295,6 +294,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
         print(e.requestOptions);
         print(e.message);
       }
+      return false; // Operasi gagal
     }
   }
 
@@ -303,14 +303,6 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
     DateFormat formatter = DateFormat('yyyy-MM-dd');
     return formatter.format(now);
   }
-
-  // print(arguments['jenis_pangan_id']);
-  // print(data.toString());
-  // List<String> dataList = prefs.getStringList('data_pangan') ?? [];
-  // dataList.add(jsonEncode(data));
-  // await prefs.setStringList('data_pangan', dataList);
-
-  // print(data.toString());
 
   @override
   Widget build(BuildContext context) {
@@ -334,10 +326,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                     fontWeight: medium,
                   ),
                 ),
-                const SizedBox(
-                  height: 5,
-                ),
-
+                const SizedBox(height: 5),
                 DropdownSearch<SubjenisPangan>(
                   itemAsString: (SubjenisPangan? item) => item?.name ?? '',
                   dropdownDecoratorProps: DropDownDecoratorProps(
@@ -347,9 +336,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                         fontSize: 14,
                         fontWeight: FontWeight.normal,
                       ),
-
-                      fillColor: Colors
-                          .white, // Ubah warna fill (isi) dari kotak form di sini
+                      fillColor: Colors.white,
                       filled: true,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
@@ -367,7 +354,6 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   asyncItems: (String filter) async {
                     var response = await Dio().get(
                       "https://sintrenayu.com/api/pangan/subjenis_pangan/${arguments!['jenis_pangan_id']}",
-                      // queryParameters: {"filter": filter},
                     );
                     var models = SubjenisPangan.fromJsonList(
                         response.data['subjenis_pangan']);
@@ -377,22 +363,10 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                     subjenisPanganID = data!.id;
                   },
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                // CustomTextFromField(
-                //   controller: namapanganC,
-                //   title: 'Nama Pangan',
-                //   hintText: 'Masukan nama pangan',
-                //   validator: (value) {
-                //     return value!.isEmpty
-                //         ? "Nama pangan tidak boleh kosong"
-                //         : null;
-                //   },
-                // ),
+                const SizedBox(height: 20),
                 CustomTextFromField(
                   controller: persediaanC,
-                  title: 'persediaan',
+                  title: 'Persediaan',
                   hintText: 'Masukan jumlah ketersediaan',
                   validator: (value) {
                     return value!.isEmpty
@@ -400,19 +374,15 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                         : null;
                   },
                 ),
-                // CustomTextFromField(
-                //   controller: kebutuhanC,
-                //   title: 'Kebutuhan',
-                //   hintText: 'Masukan jumlah kebutuhan',
-                // ),
                 CustomTextFromField(
                   controller: hargaC,
                   title: 'Harga',
-                  hintText: 'Masukan jumlah harga ',
+                  hintText: 'Masukan jumlah harga',
                   validator: (value) {
                     return value!.isEmpty ? "Harga tidak boleh kosong" : null;
                   },
                 ),
+                const SizedBox(height: 10),
                 CustomButton(
                   width: MediaQuery.of(context).size.width,
                   title: 'Simpan',
@@ -422,17 +392,21 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   ),
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      // Navigator.pushNamed(context, '/draftdata');
-                      // // print(arguments['jenis_pangan_id']);
-
-                      store(arguments!['jenis_pangan_id'], 0);
+                      store(arguments!['jenis_pangan_id'], 0).then((success) {
+                        if (success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Data berhasil disimpan sebagai draft')),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Gagal menyimpan data sebagai draft')),
+                          );
+                        }
+                      });
                     }
-
-                    // if (validateInputs()) {
-                    // }
                   },
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 CustomButton(
                   title: 'Kirim',
                   width: MediaQuery.of(context).size.width,
@@ -443,12 +417,17 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   ),
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      // Navigator.pushNamed(context, '/draftdata');
-                      // // print(arguments['jenis_pangan_id']);
-                      final arguments = ModalRoute.of(context)
-                          ?.settings
-                          .arguments as Map<String, dynamic>?;
-                      store(arguments!['jenis_pangan_id'], 1);
+                      store(arguments!['jenis_pangan_id'], 1).then((success) {
+                        if (success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Data berhasil terkirim')),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Gagal mengirim data')),
+                          );
+                        }
+                      });
                     }
                   },
                 ),

@@ -25,12 +25,13 @@ class _GrafikDataState extends State<GrafikData> {
     ChartModel('May', 5),
   ];
 
-  Future<List<ChartModel>> fetchData() async {
+  Future<List<ChartModel>> fetchData({String? date}) async {
     try {
       final dio = Dio();
       final userId = await PreferencesService().getId();
+      final url = date != null ? 'https://sintrenayu.com/api/pangan/grafik-data/$userId?date=$date': 'https://sintrenayu.com/api/pangan/grafik-data/$userId';
       final response = await dio.get(
-        'https://sintrenayu.com/api/pangan/grafik-data/$userId',
+        url,
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
@@ -84,7 +85,7 @@ class _GrafikDataState extends State<GrafikData> {
         ),
       ),
       body: FutureBuilder<List<ChartModel>>(
-          future: fetchData(),
+          future: fetchData(date: selectedDate.toString()),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
@@ -135,6 +136,7 @@ class _GrafikDataState extends State<GrafikData> {
     return Expanded(
       child: TextFormField(
         readOnly: true,
+        initialValue: DateFormat('dd/MM/yyyy').format(selectedDate),
         decoration: InputDecoration(
           labelText: 'Pilih Tanggal...',
           hintText: DateFormat('dd/MM/yyyy').format(selectedDate),
