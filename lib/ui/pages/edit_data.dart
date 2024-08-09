@@ -46,9 +46,9 @@ class _EditDataState extends State<EditData> {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (status == 0) {
-          Navigator.pushNamed(context, '/draftdata');
+          Navigator.pushReplacementNamed(context, '/draftdata');
         } else {
-          Navigator.pushNamed(context, '/riwayatdataterkirim');
+          Navigator.pushReplacementNamed(context, '/riwayatdataterkirim');
         }
         return true;
       } else {
@@ -149,27 +149,6 @@ class _EditDataState extends State<EditData> {
               ),
               SizedBox(height: 10),
               CustomButton(
-                title: 'Simpan Data',
-                width: MediaQuery.of(context).size.width,
-                textStyle: whiteTextStyle.copyWith(fontSize: 16, fontWeight: semiBold),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) { // Periksa validasi form
-                    update(id!, 0).then((success) {
-                      if (success) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Data berhasil diperbarui')),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Gagal menyimpan data terbaru')),
-                        );
-                      }
-                    });
-                  }
-                },
-              ),
-              SizedBox(height: 10),
-              CustomButton(
                 title: 'Kirim Data',
                 width: MediaQuery.of(context).size.width,
                 backgroundColor: kOrangeColor,
@@ -179,17 +158,39 @@ class _EditDataState extends State<EditData> {
                     update(id!, 1).then((success) {
                       if (success) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Data terbaru berhasil terkirim')),
+                          SnackBar(content: Text('Data berhasil terkirim')),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Gagal mengirim data terbaru')),
+                          SnackBar(content: Text('Gagal mengirim data')),
                         );
                       }
                     });
                   }
                 },
               ),
+              SizedBox(height: 10),
+              CustomButton(
+                title: 'Simpan Data',
+                width: MediaQuery.of(context).size.width,
+                textStyle: whiteTextStyle.copyWith(fontSize: 16, fontWeight: semiBold),
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) { // Periksa validasi form
+                    update(id!, 0).then((success) {
+                      if (success) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Data berhasil disimpan sebagai draft')),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Gagal menyimpan data sebagai draft')),
+                        );
+                      }
+                    });
+                  }
+                },
+              ),
+              
             ],
           ),
         ),

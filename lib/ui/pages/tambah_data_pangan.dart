@@ -276,9 +276,9 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Data berhasil disimpan');
         if (status == 0) {
-          Navigator.pushNamed(context, '/draftdata');
+          Navigator.pushReplacementNamed(context, '/draftdata');
         } else {
-          Navigator.pushNamed(context, '/riwayatdataterkirim');
+          Navigator.pushReplacementNamed(context, '/riwayatdataterkirim');
         }
         return true; // Operasi berhasil
       } else {
@@ -384,30 +384,6 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                 ),
                 const SizedBox(height: 10),
                 CustomButton(
-                  width: MediaQuery.of(context).size.width,
-                  title: 'Simpan',
-                  textStyle: whiteTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: semiBold,
-                  ),
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {
-                      store(arguments!['jenis_pangan_id'], 0).then((success) {
-                        if (success) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Data berhasil disimpan sebagai draft')),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Gagal menyimpan data sebagai draft')),
-                          );
-                        }
-                      });
-                    }
-                  },
-                ),
-                const SizedBox(height: 10),
-                CustomButton(
                   title: 'Kirim',
                   width: MediaQuery.of(context).size.width,
                   backgroundColor: kOrangeColor,
@@ -431,6 +407,31 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                     }
                   },
                 ),
+                const SizedBox(height: 10),
+                CustomButton(
+                  width: MediaQuery.of(context).size.width,
+                  title: 'Simpan',
+                  textStyle: whiteTextStyle.copyWith(
+                    fontSize: 16,
+                    fontWeight: semiBold,
+                  ),
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {
+                      store(arguments!['jenis_pangan_id'], 0).then((success) {
+                        if (success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Data berhasil disimpan sebagai draft')),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Gagal menyimpan data sebagai draft')),
+                          );
+                        }
+                      });
+                    }
+                  },
+                ),
+                
               ],
             ),
           ),

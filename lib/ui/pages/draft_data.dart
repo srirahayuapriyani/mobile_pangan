@@ -34,6 +34,8 @@ class _DraftDataState extends State<DraftData> {
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
+      print("ini response${response.data}");
+
       // Cek status code dari response
        if (response.statusCode == 200) {
         var data = response.data;
@@ -56,6 +58,8 @@ class _DraftDataState extends State<DraftData> {
     }
   }
 
+  
+
   void onDeleteCallback() {
     // Pembaruan state setelah penghapusan
     ScaffoldMessenger.of(context).showSnackBar(
@@ -74,12 +78,18 @@ class _DraftDataState extends State<DraftData> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+       appBar: AppBar(
         centerTitle: true,
         title: const Text(
           'Draft Data',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back),
+        //   onPressed: () {
+        //     Navigator.of(context).pushReplacementNamed('/daftarpangan'); // Arahkan ke halaman daftar pangan
+        //   },
+        // ),
       ),
       body: FutureBuilder<List<LaporanPangan>>(
             future: fetchTambahDataPangan(),

@@ -82,6 +82,12 @@ class _RiwayatDataTerkirimState extends State<RiwayatDataTerkirim> {
           'Riwayat Data',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back),
+        //   onPressed: () {
+        //     Navigator.of(context).pushReplacementNamed('/daftarpangan'); // Arahkan ke halaman daftar pangan
+        //   },
+        // ),
       ),
      body: Column(
         children: [
@@ -93,6 +99,7 @@ class _RiwayatDataTerkirimState extends State<RiwayatDataTerkirim> {
                 Expanded(
                   child: TextFormField(
                     readOnly: true,
+                    initialValue: DateFormat('dd/MM/yyyy').format(selectedDate),
                     decoration: InputDecoration(
                       labelText: 'Pilih Tanggal...',
                       hintText: DateFormat('dd/MM/yyyy').format(selectedDate),
