@@ -300,7 +300,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
 
   String getCurrentDateFormatted() {
     DateTime now = DateTime.now();
-    DateFormat formatter = DateFormat('yyyy-MM-dd');
+    DateFormat formatter = DateFormat('yyyy-MM-dd'); 
     return formatter.format(now);
   }
 

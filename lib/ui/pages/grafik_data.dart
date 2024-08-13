@@ -29,7 +29,9 @@ class _GrafikDataState extends State<GrafikData> {
     try {
       final dio = Dio();
       final userId = await PreferencesService().getId();
-      final url = date != null ? 'https://sintrenayu.com/api/pangan/grafik-data/$userId?date=$date': 'https://sintrenayu.com/api/pangan/grafik-data/$userId';
+      final url = date != null
+          ? 'https://sintrenayu.com/api/pangan/grafik-data/$userId?date=$date'
+          : 'https://sintrenayu.com/api/pangan/grafik-data/$userId';
       final response = await dio.get(
         url,
         options: Options(headers: {'Accept': 'application/json'}),

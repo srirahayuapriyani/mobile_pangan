@@ -4,6 +4,7 @@ import 'package:apk/ui/widgets/draft_data_tersimpan.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:apk/shared/theme.dart';
+import 'package:intl/intl.dart';
 
 class DraftData extends StatefulWidget {
   const DraftData({Key? key}) : super(key: key);
@@ -25,26 +26,32 @@ class DraftData extends StatefulWidget {
 }
 
 class _DraftDataState extends State<DraftData> {
-  Future<List<LaporanPangan>> fetchTambahDataPangan() async {
+  DateTime selectedDate = DateTime.now();
+  List<LaporanPangan> dataPangan = [];
+  TextEditingController dateController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    dateController.text = DateFormat('dd/MM/yyyy').format(selectedDate);
+  }
+
+  Future<List<LaporanPangan>> fetchTambahDataPangan({String? date}) async {
     try {
       final dio = Dio();
       final userId = await PreferencesService().getId();
+      final url = date != null
+          ? 'https://sintrenayu.com/api/pangan/showByUser/$userId?date=$date'
+          : 'https://sintrenayu.com/api/pangan/showByUser/$userId?status=tersimpan';
       final response = await dio.get(
-        'https://sintrenayu.com/api/pangan/showByUser/$userId?status=tersimpan',
+        url,
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
-      print("ini response${response.data}");
-
-      // Cek status code dari response
-       if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
         var data = response.data;
-
-        // Cek format data apakah sesuai
         if (data is Map<String, dynamic> && data.containsKey('data')) {
           List<dynamic> dataList = data['data'];
-
-          // Parse setiap item dalam dataList menjadi LaporanPangan
           return dataList.map((item) => LaporanPangan.fromJson(item)).toList();
         } else {
           throw Exception('Invalid data format');
@@ -58,10 +65,23 @@ class _DraftDataState extends State<DraftData> {
     }
   }
 
-  
+  void _pickDate() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null && pickedDate != selectedDate) {
+      setState(() {
+        selectedDate = pickedDate;
+        dateController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
+      });
+    }
+  }
 
   void onDeleteCallback() {
-    // Pembaruan state setelah penghapusan
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Data berhasil dihapus'),
@@ -70,71 +90,95 @@ class _DraftDataState extends State<DraftData> {
     Navigator.of(context).pushReplacementNamed('/draftdata');
   }
 
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   List<String> dataList = prefs.getStringList('data_pangan') ?? [];
-  // List<Map<String, dynamic>> data = dataList.map((item) => jsonDecode(item) as Map<String, dynamic>).toList();
-  //   return data;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: AppBar(
+      appBar: AppBar(
         centerTitle: true,
         title: const Text(
           'Draft Data',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     Navigator.of(context).pushReplacementNamed('/daftarpangan'); // Arahkan ke halaman daftar pangan
-        //   },
-        // ),
       ),
-      body: FutureBuilder<List<LaporanPangan>>(
-            future: fetchTambahDataPangan(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(child: Text('No Data Found'));
-              } else {
-                List<LaporanPangan> dataPangan = snapshot.data!;
-                return SingleChildScrollView(
-                  child: Container(
-                    color: kPrimaryColor,
-                    padding: const EdgeInsets.only(bottom: 100),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 10),
-                        for (var item in dataPangan)
-                          draftDataPanganTersimpan(
-                            laporanPangan: item,
-                            subjenisPangan: item.subjenisPangan,
-                            jenis_pangan_id: item.jenisPanganId,
-                            status: item.status == 0 ? false : true,
-                            title1: 'Nama Pangan',
-                            valueText1: item.subjenisPangan.name,
-                            title2: 'Persediaan',
-                            valueText2: item.stok.toString(),
-                            title4: 'Harga',
-                            valueText4: item.harga.toString(),
-                            id: item.id.toString(),
-                            onDelete: () => onDeleteCallback(),
-                          ),
-                      ],
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: dateController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: 'Pilih Tanggal...',
+                      hintText: DateFormat('dd/MM/yyyy').format(selectedDate),
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.calendar_today),
+                        onPressed: _pickDate,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
                     ),
                   ),
-                );
-              }
-            },
+                ),
+              ],
+            ),
           ),
+          Expanded(
+            child: FutureBuilder<List<LaporanPangan>>(
+              future: fetchTambahDataPangan(
+                  date: DateFormat('yyyy-MM-dd').format(selectedDate)),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text('No Data Found'));
+                } else {
+                  List<LaporanPangan> dataPangan = snapshot.data!;
+                  return SingleChildScrollView(
+                    child: Container(
+                      color: kPrimaryColor,
+                      padding: const EdgeInsets.only(bottom: 100),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 10),
+                          for (var item in dataPangan)
+                            draftDataPanganTersimpan(
+                              laporanPangan: item,
+                              subjenisPangan: item.subjenisPangan,
+                              jenis_pangan_id: item.jenisPanganId,
+                              status: item.status == 0 ? false : true,
+                              title1: 'Nama Pangan',
+                              valueText1: item.subjenisPangan.name,
+                              title2: 'Persediaan',
+                              valueText2: item.stok.toString(),
+                              title4: 'Harga',
+                              valueText4: item.harga.toString(),
+                              id: item.id.toString(),
+                              onDelete: () => onDeleteCallback(),
+                            ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
+
+
+
   
 
         

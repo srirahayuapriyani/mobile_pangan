@@ -16,13 +16,28 @@ class RiwayatDataTerkirim extends StatefulWidget {
 class _RiwayatDataTerkirimState extends State<RiwayatDataTerkirim> {
   DateTime selectedDate = DateTime.now();
   List<LaporanPangan> dataPangan = [];
+  TextEditingController dateController = TextEditingController();
 
-  Future<List<LaporanPangan>> getTambahDataPangan() async {
+  @override
+  void initState() {
+    super.initState();
+    dateController.text = DateFormat('dd/MM/yyyy').format(selectedDate);
+    getTambahDataPangan().then((data) {
+      setState(() {
+        dataPangan = data;
+      });
+    });
+  }
+
+  Future<List<LaporanPangan>> getTambahDataPangan({String? date}) async {
     try {
       final dio = Dio();
       final userId = await PreferencesService().getId();
+      final url = date != null
+          ? 'https://sintrenayu.com/api/pangan/showByUser/$userId?date=$date'
+          : 'https://sintrenayu.com/api/pangan/showByUser/$userId?status=terkirim';
       final response = await dio.get(
-        'https://sintrenayu.com/api/pangan/showByUser/$userId?status=terkirim',
+        url,
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
@@ -54,18 +69,9 @@ class _RiwayatDataTerkirimState extends State<RiwayatDataTerkirim> {
     if (pickedDate != null && pickedDate != selectedDate) {
       setState(() {
         selectedDate = pickedDate;
+        dateController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
       });
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getTambahDataPangan().then((data) {
-      setState(() {
-        dataPangan = data;
-      });
-    });
   }
 
   @override
@@ -82,14 +88,8 @@ class _RiwayatDataTerkirimState extends State<RiwayatDataTerkirim> {
           'Riwayat Data',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     Navigator.of(context).pushReplacementNamed('/daftarpangan'); // Arahkan ke halaman daftar pangan
-        //   },
-        // ),
       ),
-     body: Column(
+      body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -98,8 +98,8 @@ class _RiwayatDataTerkirimState extends State<RiwayatDataTerkirim> {
               children: [
                 Expanded(
                   child: TextFormField(
+                    controller: dateController,
                     readOnly: true,
-                    initialValue: DateFormat('dd/MM/yyyy').format(selectedDate),
                     decoration: InputDecoration(
                       labelText: 'Pilih Tanggal...',
                       hintText: DateFormat('dd/MM/yyyy').format(selectedDate),
@@ -113,10 +113,6 @@ class _RiwayatDataTerkirimState extends State<RiwayatDataTerkirim> {
                     ),
                   ),
                 ),
-                // ElevatedButton(
-                //   onPressed: _pickDate,
-                //   child: Text('Pilih Tanggal'),
-                // ),
               ],
             ),
           ),
