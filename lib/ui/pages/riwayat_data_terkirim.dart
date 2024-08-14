@@ -22,22 +22,14 @@ class _RiwayatDataTerkirimState extends State<RiwayatDataTerkirim> {
   void initState() {
     super.initState();
     dateController.text = DateFormat('dd/MM/yyyy').format(selectedDate);
-    getTambahDataPangan().then((data) {
-      setState(() {
-        dataPangan = data;
-      });
-    });
   }
 
-  Future<List<LaporanPangan>> getTambahDataPangan({String? date}) async {
+  Future<List<LaporanPangan>> getTambahDataPangan() async {
     try {
       final dio = Dio();
       final userId = await PreferencesService().getId();
-      final url = date != null
-          ? 'https://sintrenayu.com/api/pangan/showByUser/$userId?date=$date'
-          : 'https://sintrenayu.com/api/pangan/showByUser/$userId?status=terkirim';
       final response = await dio.get(
-        url,
+        'https://sintrenayu.com/api/pangan/showByUser/$userId?status=terkirim',
         options: Options(headers: {'Accept': 'application/json'}),
       );
 
@@ -76,11 +68,6 @@ class _RiwayatDataTerkirimState extends State<RiwayatDataTerkirim> {
 
   @override
   Widget build(BuildContext context) {
-    List<LaporanPangan> filteredData = dataPangan.where((item) {
-      return DateFormat('yyyy-MM-dd').format(DateTime.parse(item.date)) ==
-          DateFormat('yyyy-MM-dd').format(selectedDate);
-    }).toList();
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -117,9 +104,22 @@ class _RiwayatDataTerkirimState extends State<RiwayatDataTerkirim> {
             ),
           ),
           Expanded(
-            child: filteredData.isEmpty
-                ? Center(child: Text('No Data Found'))
-                : SingleChildScrollView(
+            child: FutureBuilder<List<LaporanPangan>>(
+              future: getTambahDataPangan(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text('No Data Found'));
+                } else {
+                  List<LaporanPangan> filteredData = snapshot.data!.where((item) {
+                    return DateFormat('yyyy-MM-dd').format(DateTime.parse(item.date)) ==
+                        DateFormat('yyyy-MM-dd').format(selectedDate);
+                  }).toList();
+
+                  return SingleChildScrollView(
                     child: Container(
                       color: kPrimaryColor,
                       padding: const EdgeInsets.only(bottom: 100),
@@ -145,7 +145,10 @@ class _RiwayatDataTerkirimState extends State<RiwayatDataTerkirim> {
                         ],
                       ),
                     ),
-                  ),
+                  );
+                }
+              },
+            ),
           ),
         ],
       ),

@@ -34,6 +34,16 @@ class _DraftDataState extends State<DraftData> {
   void initState() {
     super.initState();
     dateController.text = DateFormat('dd/MM/yyyy').format(selectedDate);
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    List<LaporanPangan> data = await fetchTambahDataPangan(
+      date: DateFormat('yyyy-MM-dd').format(selectedDate),
+    );
+    setState(() {
+      dataPangan = data;
+    });
   }
 
   Future<List<LaporanPangan>> fetchTambahDataPangan({String? date}) async {
@@ -78,6 +88,7 @@ class _DraftDataState extends State<DraftData> {
         selectedDate = pickedDate;
         dateController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
       });
+      _fetchData();
     }
   }
 
@@ -128,47 +139,53 @@ class _DraftDataState extends State<DraftData> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<LaporanPangan>>(
-              future: fetchTambahDataPangan(
-                  date: DateFormat('yyyy-MM-dd').format(selectedDate)),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No Data Found'));
-                } else {
-                  List<LaporanPangan> dataPangan = snapshot.data!;
-                  return SingleChildScrollView(
-                    child: Container(
-                      color: kPrimaryColor,
-                      padding: const EdgeInsets.only(bottom: 100),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 10),
-                          for (var item in dataPangan)
-                            draftDataPanganTersimpan(
-                              laporanPangan: item,
-                              subjenisPangan: item.subjenisPangan,
-                              jenis_pangan_id: item.jenisPanganId,
-                              status: item.status == 0 ? false : true,
-                              title1: 'Nama Pangan',
-                              valueText1: item.subjenisPangan.name,
-                              title2: 'Persediaan',
-                              valueText2: item.stok.toString(),
-                              title4: 'Harga',
-                              valueText4: item.harga.toString(),
-                              id: item.id.toString(),
-                              onDelete: () => onDeleteCallback(),
-                            ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-              },
+            child: RefreshIndicator(
+              onRefresh: _fetchData, // Fungsi yang dipanggil saat refresh
+              child: FutureBuilder<List<LaporanPangan>>(
+                future: fetchTambahDataPangan(
+                    date: DateFormat('yyyy-MM-dd').format(selectedDate)),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('No Data Found'));
+                  } else {
+                    List<LaporanPangan> dataPangan = snapshot.data!;
+                    return ListView(
+                      // Ganti SingleChildScrollView dengan ListView
+                      children: [
+                        Container(
+                          color: kPrimaryColor,
+                          padding: const EdgeInsets.only(bottom: 100),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 10),
+                              for (var item in dataPangan)
+                                draftDataPanganTersimpan(
+                                  laporanPangan: item,
+                                  subjenisPangan: item.subjenisPangan,
+                                  jenis_pangan_id: item.jenisPanganId,
+                                  status: item.status == 0 ? false : true,
+                                  title1: 'Nama Pangan',
+                                  valueText1: item.subjenisPangan.name,
+                                  title2: 'Persediaan',
+                                  valueText2: item.stok.toString(),
+                                  title4: 'Harga',
+                                  valueText4: item.harga.toString(),
+                                  id: item.id.toString(),
+                                  onDelete: () => onDeleteCallback(),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                },
+              ),
             ),
           ),
         ],
@@ -176,7 +193,6 @@ class _DraftDataState extends State<DraftData> {
     );
   }
 }
-
 
 
   
