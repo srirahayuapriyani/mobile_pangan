@@ -300,7 +300,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
 
   String getCurrentDateFormatted() {
     DateTime now = DateTime.now();
-    DateFormat formatter = DateFormat('yyyy-MM-dd'); 
+    DateFormat formatter = DateFormat('yyyy-MM-dd');
     return formatter.format(now);
   }
 
@@ -368,6 +368,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   controller: persediaanC,
                   title: 'Persediaan',
                   hintText: 'Masukan jumlah ketersediaan',
+                  suffix: Text('Ton'),
                   validator: (value) {
                     return value!.isEmpty
                         ? "Persediaan tidak boleh kosong"
@@ -378,6 +379,7 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                   controller: hargaC,
                   title: 'Harga',
                   hintText: 'Masukan jumlah harga',
+                  suffix: Text('Rp/Kg'),
                   validator: (value) {
                     return value!.isEmpty ? "Harga tidak boleh kosong" : null;
                   },
@@ -420,18 +422,21 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
                       store(arguments!['jenis_pangan_id'], 0).then((success) {
                         if (success) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Data berhasil disimpan sebagai draft')),
+                            SnackBar(
+                                content: Text(
+                                    'Data berhasil disimpan sebagai draft')),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Gagal menyimpan data sebagai draft')),
+                            SnackBar(
+                                content:
+                                    Text('Gagal menyimpan data sebagai draft')),
                           );
                         }
                       });
                     }
                   },
                 ),
-                
               ],
             ),
           ),

@@ -135,6 +135,7 @@ class _EditDataState extends State<EditData> {
                 controller: persediaanController,
                 title: 'Persediaan',
                 hintText: 'Masukan Ketersediaan',
+                suffix: Text('Ton'),
                 validator: (value) {
                   return value!.isEmpty ? "Persediaan tidak boleh kosong" : null;
                 },
@@ -143,6 +144,7 @@ class _EditDataState extends State<EditData> {
                 controller: hargaController,
                 title: 'Harga',
                 hintText: 'Masukan harga',
+                suffix: Text('Rp/Kg'),
                 validator: (value) {
                   return value!.isEmpty ? "Harga tidak boleh kosong" : null;
                 },

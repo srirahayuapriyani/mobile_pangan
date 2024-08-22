@@ -178,7 +178,7 @@ class _GrafikDataState extends State<GrafikData> {
         borderWidth: 0,
         tooltipBehavior: TooltipBehavior(enable: true),
         series: [
-          SplineSeries<ChartModel, String>(
+          ColumnSeries<ChartModel, String>(
             width: 1,
             dataSource: dataChart,
             xValueMapper: (ChartModel data, _) => data.xAxis,
@@ -189,6 +189,7 @@ class _GrafikDataState extends State<GrafikData> {
             markerSettings: const MarkerSettings(
               isVisible: true,
             ),
+             spacing: 0.3,
           ),
         ],
       ),

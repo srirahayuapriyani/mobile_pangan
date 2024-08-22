@@ -169,7 +169,7 @@ class draftDataPanganTersimpan extends StatelessWidget {
                     ),
                     Spacer(),
                     Text(
-                      '$valueText2',
+                      '$valueText2 Ton',
                       style: semiblackTextStyle.copyWith(
                         fontSize: 14,
                         fontWeight: reguler,
@@ -207,7 +207,7 @@ class draftDataPanganTersimpan extends StatelessWidget {
                     ),
                     Spacer(),
                     Text(
-                      '$valueText4',
+                      '$valueText4 Rp/Kg',
                       style: semiblackTextStyle.copyWith(
                         fontSize: 14,
                         fontWeight: reguler,

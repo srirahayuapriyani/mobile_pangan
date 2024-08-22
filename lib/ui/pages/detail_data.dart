@@ -133,7 +133,7 @@ class DetailData extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
-                Text(laporanPangan.stok.toString()), // Tambahkan Spacer untuk mencentang ke sisi kanan
+                Text('${laporanPangan.stok} Ton'), // Tambahkan Spacer untuk mencentang ke sisi kanan
               ],
             ),
             SizedBox(height: 10),
@@ -148,7 +148,7 @@ class DetailData extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
-                Text(laporanPangan.harga.toString()), // Tambahkan Spacer untuk mencentang ke sisi kanan
+                Text('${laporanPangan.stok} Rp/kg'), // Tambahkan Spacer untuk mencentang ke sisi kanan
               ],
             ),
           ],

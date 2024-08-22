@@ -11,6 +11,7 @@ class CustomTextFromField extends StatelessWidget {
   final TextInputType? inputType;
   final String? Function(String?)? validator;
   final bool readOnly;
+  final Widget? suffix;
 
   const CustomTextFromField({
     Key? key,
@@ -22,6 +23,7 @@ class CustomTextFromField extends StatelessWidget {
     this.prefixIcon,
     this.controller,
     this.inputType,
+    this.suffix,
     this.readOnly =
         false, // Tambahkan tanda '?' agar prefixIcon menjadi opsional
   }) : super(key: key);
@@ -77,8 +79,20 @@ class CustomTextFromField extends StatelessWidget {
               ),
               contentPadding:
                   EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-              prefixIcon: prefixIcon, // Atur ukuran kotak form di sini
-            ),
+              prefixIcon: prefixIcon,
+              suffixIcon: suffix != null
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        suffix!,
+                        SizedBox(
+                            width:
+                                8), // Mengatur jarak antara suffix dan sisi kanan
+                      ],
+                    )
+                  : null,
+            ), // Atur ukuran kotak form di sini
           ),
         ],
       ),
