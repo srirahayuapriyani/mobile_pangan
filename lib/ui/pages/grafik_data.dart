@@ -25,6 +25,11 @@ class _GrafikDataState extends State<GrafikData> {
     ChartModel('May', 5),
   ];
 
+  String formatCurrency(int value) {
+    final formatter = NumberFormat('#,###', 'id_ID');
+    return formatter.format(value);
+  }
+
   Future<List<ChartModel>> fetchData({String? date}) async {
     try {
       final dio = Dio();
@@ -218,7 +223,7 @@ class _GrafikDataState extends State<GrafikData> {
             padding:
                 const EdgeInsets.symmetric(vertical: 5), // Jarak antar label
             child: Text(
-              '${data.xAxis}: ${data.yAxis}',
+              '${data.xAxis}: ${formatCurrency(data.yAxis)}',
               style: blackTextStyle.copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.w500, // Mengatur gaya font

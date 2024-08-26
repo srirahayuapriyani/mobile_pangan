@@ -24,6 +24,17 @@ class _RiwayatDataTerkirimState extends State<RiwayatDataTerkirim> {
     dateController.text = DateFormat('dd/MM/yyyy').format(selectedDate);
   }
 
+   String formatCurrency(String value) {
+    if (value.isEmpty) return '';
+    // Hapus semua karakter non-digit
+    String numberString = value.replaceAll(RegExp(r'[^\d]'), '');
+    if (numberString.isEmpty) return '';
+
+    int number = int.parse(numberString);
+    final formatter = NumberFormat('#,###', 'id_ID');
+    return formatter.format(number);
+  }
+
   Future<List<LaporanPangan>> getTambahDataPangan() async {
     try {
       final dio = Dio();
@@ -138,7 +149,7 @@ class _RiwayatDataTerkirimState extends State<RiwayatDataTerkirim> {
                               title2: 'Persediaan',
                               valueText2: item.stok.toString(),
                               title4: 'Harga',
-                              valueText4: item.harga.toString(),
+                              valueText4: formatCurrency(item.harga.toString()),
                               id: item.id.toString(),
                               onDelete: () {},
                             ),

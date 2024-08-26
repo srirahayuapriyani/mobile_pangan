@@ -160,7 +160,7 @@ class _EditDataState extends State<EditData> {
                     update(id!, 1).then((success) {
                       if (success) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Data berhasil terkirim')),
+                          SnackBar(content: Text('Data terbaru berhasil terkirim')),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -181,7 +181,7 @@ class _EditDataState extends State<EditData> {
                     update(id!, 0).then((success) {
                       if (success) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Data berhasil disimpan sebagai draft')),
+                          SnackBar(content: Text('Data berhasil diperbarui sebagai draft')),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(

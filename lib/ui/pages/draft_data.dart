@@ -37,6 +37,18 @@ class _DraftDataState extends State<DraftData> {
     _fetchData();
   }
 
+  // Fungsi untuk memformat harga menjadi format ribuan dengan titik
+  String formatCurrency(String value) {
+    if (value.isEmpty) return '';
+    // Hapus semua karakter non-digit
+    String numberString = value.replaceAll(RegExp(r'[^\d]'), '');
+    if (numberString.isEmpty) return '';
+
+    int number = int.parse(numberString);
+    final formatter = NumberFormat('#,###', 'id_ID');
+    return formatter.format(number);
+  }
+
   Future<void> _fetchData() async {
     List<LaporanPangan> data = await fetchTambahDataPangan(
       date: DateFormat('yyyy-MM-dd').format(selectedDate),
@@ -174,7 +186,7 @@ class _DraftDataState extends State<DraftData> {
                                   title2: 'Persediaan',
                                   valueText2: item.stok.toString(),
                                   title4: 'Harga',
-                                  valueText4: item.harga.toString(),
+                                  valueText4: formatCurrency(item.harga.toString()), // Format harga
                                   id: item.id.toString(),
                                   onDelete: () => onDeleteCallback(),
                                 ),
@@ -193,7 +205,6 @@ class _DraftDataState extends State<DraftData> {
     );
   }
 }
-
 
   
 

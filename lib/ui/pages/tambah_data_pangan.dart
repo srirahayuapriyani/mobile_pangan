@@ -227,7 +227,6 @@
 // }
 
 import 'dart:convert';
-
 import 'package:apk/models/subjenis_pangan_model.dart';
 import 'package:apk/service/preferencesService.dart';
 import 'package:apk/shared/theme.dart';
@@ -253,14 +252,43 @@ class _TambahDataPanganState extends State<TambahDataPangan> {
   final formKey = GlobalKey<FormState>();
   final Dio _dio = Dio();
 
+  @override
+  void initState() {
+    super.initState();
+
+    // Listener untuk memformat input harga menjadi format ribuan
+    hargaC.addListener(() {
+      final text = formatCurrency(hargaC.text);
+      hargaC.value = hargaC.value.copyWith(
+        text: text,
+        selection: TextSelection.collapsed(offset: text.length),
+      );
+    });
+  }
+
+  // Fungsi untuk memformat input harga menjadi format ribuan dengan titik
+  String formatCurrency(String value) {
+    if (value.isEmpty) return '';
+    // Hapus semua karakter non-digit
+    String numberString = value.replaceAll(RegExp(r'[^\d]'), '');
+    if (numberString.isEmpty) return '';
+
+    int number = int.parse(numberString);
+    final formatter = NumberFormat('#,###', 'id_ID');
+    return formatter.format(number);
+  }
+
   Future<bool> store(int jId, int status) async {
+    // Format harga sebelum disimpan
+    String formattedHarga = hargaC.text.replaceAll('.', ''); // Hapus titik sebelum simpan
+
     var data = {
       'user_id': PreferencesService().getId(),
       'pasar_id': PreferencesService().getPasarId(),
       'jenis_pangan_id': jId.toString(),
       'subjenis_pangan_id': subjenisPanganID.toString(),
       'stok': persediaanC.text,
-      'harga': hargaC.text,
+      'harga': formattedHarga, // Simpan harga tanpa format ribuan
       'date': getCurrentDateFormatted(),
       'status': status,
     };
